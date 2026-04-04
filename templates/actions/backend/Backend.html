@@ -91,7 +91,8 @@
         </div>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.36.5/ace.js"></script>
+<script src="{$wa_app_static_url}js/vendor/ace/ace.js"></script>
+<script>ace.config.set('basePath', '{$wa_app_static_url}js/vendor/ace/');</script>
 <script>
 {literal}
 (($) => {
@@ -121,13 +122,21 @@
         initEditors() {
             this.phpEditor = ace.edit("php-editor");
             this.phpEditor.session.setMode("ace/mode/php");
-            this.phpEditor.setTheme("ace/theme/monokai");
             this.phpEditor.setOptions({ fontSize: "14px", showPrintMargin: false });
 
             this.smartyEditor = ace.edit("smarty-editor");
             this.smartyEditor.session.setMode("ace/mode/smarty");
-            this.smartyEditor.setTheme("ace/theme/monokai");
             this.smartyEditor.setOptions({ fontSize: "14px", showPrintMargin: false });
+
+            this.applyWaTheme();
+            this.#watchWaTheme();
+        }
+
+        applyWaTheme() {
+            const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+            const theme = isDark ? "monokai" : "eclipse";
+            this.phpEditor.setTheme("ace/theme/" + theme);
+            this.smartyEditor.setTheme("ace/theme/" + theme);
         }
 
         bindEvents() {
@@ -309,6 +318,13 @@
             const $icon = $("#access-toggle");
             $icon.html(this.isShared ? "&#127760;" : "&#128274;");
             $icon.attr("title", this.isShared ? "Общий доступ" : "Личный");
+        }
+
+        #watchWaTheme() {
+            new MutationObserver(() => this.applyWaTheme()).observe(
+                document.documentElement,
+                { attributes: true, attributeFilter: ["data-theme"] }
+            );
         }
 
         #initAutoSave() {
