@@ -1,6 +1,6 @@
 <div class="content">
     <div class="box contentbox">
-        <div class="block">
+        <div class="box">
             <div class="flexbox space-8 middle">
                 <div class="wide">
                     <div class="flexbox space-8 middle">
@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <div class="block">
+        <div class="box">
             <div class="flexbox space-8 middle">
                 <div>
                     <div class="wa-select">
@@ -58,20 +58,20 @@
         <div class="sandbox-editor-layout">
             <div class="sandbox-editors-column">
                 <div class="sandbox-editor-box box shadowed">
-                    <div class="block small"><strong>PHP</strong></div>
+                    <div class="box small"><strong>PHP</strong></div>
                     <div class="sandbox-editor-container" id="php-editor"></div>
                 </div>
 
                 <div id="smarty-editor-wrapper" class="sandbox-editor-box box shadowed" style="display:none">
-                    <div class="block small"><strong>Smarty</strong></div>
+                    <div class="box small"><strong>Smarty</strong></div>
                     <div class="sandbox-editor-container" id="smarty-editor"></div>
                 </div>
 
-                <div class="block sandbox-editor-footer">
+                <div class="box sandbox-editor-footer">
                     <input type="text" id="snippet-description" placeholder="Описание (необязательно)" class="full-width">
                 </div>
 
-                <div class="block sandbox-editor-footer">
+                <div class="box sandbox-editor-footer">
                     <button type="button" id="btn-execute" class="button green">&#9654; Выполнить</button>
                     <button type="button" id="btn-save" class="button blue">&#128190; Сохранить</button>
                     <button type="button" id="btn-new" class="button light-gray">Новый</button>
@@ -80,9 +80,10 @@
 
             <div class="sandbox-result-column">
                 <div class="sandbox-result-box box shadowed">
-                    <div class="block small flexbox middle space-8">
+                    <div class="box small flexbox middle space-8">
                         <strong class="wide">Результат</strong>
                         <button type="button" id="btn-clear-result" class="button light-gray small">Очистить</button>
+                        <button type="button" id="btn-copy-result" class="button light-gray small">Копировать</button>
                     </div>
                     <div id="result-output" class="sandbox-result-panel"></div>
                     <div id="result-errors" class="sandbox-error" style="display:none"></div>
@@ -143,6 +144,16 @@
             $("#btn-execute").on("click", () => this.execute());
             $("#btn-save").on("click", () => this.save());
             $("#btn-new").on("click", () => this.newSnippet());
+            $("#btn-copy-result").on("click", () => {
+                const text = $("#result-output").text();
+                navigator.clipboard.writeText(text).then(() => {
+                    const $btn = $("#btn-copy-result");
+                    const orig = $btn.text();
+                    $btn.text("Скопировано!");
+                    setTimeout(() => $btn.text(orig), 1500);
+                });
+            });
+
             $("#btn-clear-result").on("click", () => {
                 $("#result-output").html("");
                 $("#result-errors").hide().html("");
