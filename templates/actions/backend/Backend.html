@@ -5,8 +5,8 @@
                 <div class="wide" style="min-width:0">
                     <div class="flexbox space-8 middle" style="min-width:0">
                         <div style="min-width:0;flex:1">
-                            <div id="snippet-name-display" class="bold" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
-                            <p id="snippet-desc-display" class="hint" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:2px 0 0"></p>
+                            <div id="snippet-name-display" class="bold nowrap" style="overflow:hidden;text-overflow:ellipsis"></div>
+                            <p id="snippet-desc-display" class="hint custom-mt-2 nowrap" style="overflow:hidden;text-overflow:ellipsis"></p>
                         </div>
                         <span id="access-icon" class="sandbox-access-icon" title="Личный"><i class="fas fa-lock text-yellow"></i></span>
                     </div>
@@ -14,7 +14,7 @@
                 <div>
                     <div class="wa-select">
                         <select id="environment-select">
-                            <option value="">— Без окружения —</option>
+                            <option value="">— {_w('Без окружения')|escape} —</option>
                             {foreach $environments as $env}
                             <option value="{$env.id}">{$env.name|escape}</option>
                             {/foreach}
@@ -22,8 +22,8 @@
                     </div>
                 </div>
                 <div>
-                    <a href="?module=backend&action=catalog" class="button light-gray">Каталог сниппетов</a>
-                    <a href="?module=backend&action=environments" class="button light-gray">Окружения</a>
+                    <a href="?module=backend&action=catalog" class="button light-gray">{_w('Каталог сниппетов')|escape}</a>
+                    <a href="?module=backend&action=environments" class="button light-gray">{_w('Окружения')|escape}</a>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 <div>
                     <div class="wa-select">
                         <select id="recent-snippets">
-                            <option value="">— Недавние сниппеты —</option>
+                            <option value="">— {_w('Недавние сниппеты')|escape} —</option>
                             {foreach $recent_snippets as $s}
                             <option value="{$s.id}" class="js-load-snippet">{$s.name|escape}</option>
                             {/foreach}
@@ -71,18 +71,18 @@
                 </div>
 
                 <div class="box sandbox-editor-footer">
-                    <button type="button" id="btn-execute" class="button green"><i class="fas fa-play"></i> Выполнить</button>
-                    <button type="button" id="btn-save" class="button blue"><i class="fas fa-save"></i> Сохранить</button>
-                    <button type="button" id="btn-new" class="button light-gray">Новый</button>
+                    <button type="button" id="btn-execute" class="button green"><i class="fas fa-play"></i> {_w('Выполнить')|escape}</button>
+                    <button type="button" id="btn-save" class="button blue"><i class="fas fa-save"></i> {_w('Сохранить')|escape}</button>
+                    <button type="button" id="btn-new" class="button light-gray">{_w('Новый')|escape}</button>
                 </div>
             </div>
 
             <div class="sandbox-result-column">
                 <div class="sandbox-result-box box shadowed">
                     <div class="box small flexbox middle space-8">
-                        <strong class="wide">Результат</strong>
-                        <button type="button" id="btn-clear-result" class="button light-gray small">Очистить</button>
-                        <button type="button" id="btn-copy-result" class="button light-gray small">Копировать</button>
+                        <strong class="wide">{_w('Результат')|escape}</strong>
+                        <button type="button" id="btn-clear-result" class="button light-gray small">{_w('Очистить')|escape}</button>
+                        <button type="button" id="btn-copy-result" class="button light-gray small">{_w('Копировать')|escape}</button>
                     </div>
                     <div id="result-output" class="sandbox-result-panel"></div>
                     <div id="result-errors" class="sandbox-error" style="display:none"></div>
