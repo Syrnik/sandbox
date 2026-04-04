@@ -267,17 +267,17 @@ class sandboxBackendActions extends waJsonActions
     private function checkOwnership(?array $record): void
     {
         if (!$record || (int)$record['contact_id'] !== $this->getUserId()) {
-            throw new waException('Нет доступа', 403);
+            throw new waRightsException();
         }
     }
 
     private function checkAccess(?array $record): void
     {
         if (!$record) {
-            throw new waException('Не найдено', 404);
+            throw new waException(_w('Not found'), 404);
         }
         if (!$record['is_shared'] && (int)$record['contact_id'] !== $this->getUserId()) {
-            throw new waException('Нет доступа', 403);
+            throw new waRightsException();
         }
     }
 
@@ -369,7 +369,7 @@ class sandboxBackendActions extends waJsonActions
         $model = new sandboxSnippetModel();
         $newId = $model->add([
             'contact_id'  => $contactId,
-            'name'        => $data['name'] ?? 'Imported snippet',
+            'name'        => $data['name'] ?? _w('Imported snippet'),
             'description' => $data['description'] ?? '',
             'code_php'    => $data['code_php'] ?? '',
             'code_smarty' => $data['code_smarty'] ?? '',
@@ -384,7 +384,7 @@ class sandboxBackendActions extends waJsonActions
         $folderId = $folderModel->add([
             'contact_id'  => $contactId,
             'parent_id'   => $parentId,
-            'name'        => $data['name'] ?? 'Imported folder',
+            'name'        => $data['name'] ?? _w('Imported folder'),
             'description' => $data['description'] ?? '',
             'is_shared'   => 0,
         ]);
@@ -394,7 +394,7 @@ class sandboxBackendActions extends waJsonActions
             $snippetModel->add([
                 'contact_id'  => $contactId,
                 'folder_id'   => $folderId,
-                'name'        => $sData['name'] ?? 'Snippet',
+                'name'        => $sData['name'] ?? _w('Snippet'),
                 'description' => $sData['description'] ?? '',
                 'code_php'    => $sData['code_php'] ?? '',
                 'code_smarty' => $sData['code_smarty'] ?? '',
@@ -414,7 +414,7 @@ class sandboxBackendActions extends waJsonActions
         $model = new sandboxEnvironmentModel();
         $newId = $model->add([
             'contact_id' => $contactId,
-            'name'       => $data['name'] ?? 'Imported environment',
+            'name'       => $data['name'] ?? _w('Imported environment'),
             'is_shared'  => 0,
             'variables'  => json_encode($data['variables'] ?? [], JSON_UNESCAPED_UNICODE),
         ]);
