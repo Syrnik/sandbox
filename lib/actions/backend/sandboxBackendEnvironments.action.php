@@ -11,6 +11,7 @@ class sandboxBackendEnvironmentsAction extends waViewAction
         $environments = $envModel->getAccessible($contactId);
 
         wa()->getResponse()->addCss('css/sandbox.css', 'sandbox');
+        wa()->getResponse()->addJs('js/sandbox-environments.js', 'sandbox');
 
         $this->view->assign([
             'environments' => $environments,

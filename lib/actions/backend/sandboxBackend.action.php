@@ -15,6 +15,7 @@ class sandboxBackendAction extends waViewAction
         $environments = $envModel->getAccessible($contactId);
 
         wa()->getResponse()->addCss('css/sandbox.css', 'sandbox');
+        wa()->getResponse()->addJs('js/sandbox-editor.js', 'sandbox');
 
         $this->view->assign([
             'recent_snippets' => $recentSnippets,

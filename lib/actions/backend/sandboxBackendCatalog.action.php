@@ -22,6 +22,7 @@ class sandboxBackendCatalogAction extends waViewAction
         $snippets = $snippetModel->getAccessible($contactId, $parentId);
 
         wa()->getResponse()->addCss('css/sandbox.css', 'sandbox');
+        wa()->getResponse()->addJs('js/sandbox-catalog.js', 'sandbox');
 
         $this->view->assign([
             'folders'     => $folders,
