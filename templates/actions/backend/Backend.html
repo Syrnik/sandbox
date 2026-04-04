@@ -2,10 +2,13 @@
     <div class="box contentbox">
         <div class="box">
             <div class="flexbox space-8 middle">
-                <div class="wide">
-                    <div class="flexbox space-8 middle">
-                        <input type="text" id="snippet-name" class="bold" placeholder="Название сниппета" style="">
-                        <span id="access-toggle" class="sandbox-access-icon" title="Личный">&#128274;</span>
+                <div class="wide" style="min-width:0">
+                    <div class="flexbox space-8 middle" style="min-width:0">
+                        <div style="min-width:0;flex:1">
+                            <div id="snippet-name-display" class="bold" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+                            <p id="snippet-desc-display" class="hint" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:2px 0 0"></p>
+                        </div>
+                        <span id="access-icon" class="sandbox-access-icon" title="Личный">&#128274;</span>
                     </div>
                 </div>
                 <div>
@@ -68,10 +71,6 @@
                 </div>
 
                 <div class="box sandbox-editor-footer">
-                    <input type="text" id="snippet-description" placeholder="Описание (необязательно)" class="full-width">
-                </div>
-
-                <div class="box sandbox-editor-footer">
                     <button type="button" id="btn-execute" class="button green">&#9654; Выполнить</button>
                     <button type="button" id="btn-save" class="button blue">&#128190; Сохранить</button>
                     <button type="button" id="btn-new" class="button light-gray">Новый</button>
@@ -103,6 +102,8 @@
 
     class SandboxEditor {
         currentSnippetId = null;
+        currentSnippetName = "";
+        currentSnippetDesc = "";
         phpEditor = null;
         smartyEditor = null;
         isShared = 0;
@@ -168,11 +169,6 @@
                 }, 0);
             });
 
-            $("#access-toggle").on("click", () => {
-                this.isShared = this.isShared ? 0 : 1;
-                this.#updateAccessIcon();
-            });
-
             $("#recent-snippets").on("change", (e) => {
                 const id = parseInt($(e.currentTarget).val(), 10);
                 if (id) this.loadSnippet(id);
@@ -187,7 +183,10 @@
                     code_smarty:    this.smartyEditor.getValue(),
                     smarty_visible: $("#smarty-toggle").is(":checked"),
                     environment_id: $("#environment-select").val() ?? "",
-                    snippet_name:   $("#snippet-name").val() ?? "",
+                    snippet_id:     this.currentSnippetId,
+                    snippet_name:   this.currentSnippetName,
+                    snippet_desc:   this.currentSnippetDesc,
+                    is_shared:      this.isShared,
                     timestamp:      Date.now(),
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -215,9 +214,10 @@
                 if (state.environment_id) {
                     $("#environment-select").val(state.environment_id);
                 }
-                if (state.snippet_name) {
-                    $("#snippet-name").val(state.snippet_name);
+                if (state.snippet_id) {
+                    this.currentSnippetId = state.snippet_id;
                 }
+                this.#updateMeta(state.snippet_name || "", state.snippet_desc || "", state.is_shared || 0);
             } catch {
                 // Повреждённые данные — молча игнорируем
             }
@@ -262,32 +262,95 @@
         }
 
         save() {
-            const name = $("#snippet-name").val().trim();
-            if (!name) {
-                alert("Укажите название сниппета");
-                $("#snippet-name").focus();
-                return;
-            }
+            const hasId = !!this.currentSnippetId;
 
-            const data = {
-                id:          this.currentSnippetId ?? "",
-                name,
-                description: $("#snippet-description").val(),
-                code_php:    this.phpEditor.getValue(),
-                code_smarty: this.smartyEditor.getValue(),
-                is_shared:   this.isShared,
-            };
+            const content = `
+                <div class="fields vertical">
+                    <div class="field">
+                        <div class="name">Название <span class="red">*</span></div>
+                        <div class="value">
+                            <input type="text" id="save-dialog-name" class="full-width">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name">Описание</div>
+                        <div class="value">
+                            <textarea id="save-dialog-desc" class="full-width" rows="3" style="resize:vertical"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="fields custom-mt-12">
+                    <div class="field">
+                        <div class="name">Доступ для всех</div>
+                        <div class="value">
+                            <span class="switch" id="save-dialog-shared-switch">
+                                <input type="checkbox" id="save-dialog-shared">
+                            </span>
+                        </div>
+                    </div>
+                    ${hasId ? `<div class="field">
+                        <div class="name">Сохранить как новый</div>
+                        <div class="value">
+                            <span class="switch" id="save-dialog-as-new-switch">
+                                <input type="checkbox" id="save-dialog-as-new">
+                            </span>
+                        </div>
+                    </div>` : ""}
+                </div>`;
 
-            $.ajax({
-                url: "?module=backend&action=snippetSave",
-                type: "POST",
-                data,
-                dataType: "json",
-                success: ({ status, data: snippet }) => {
-                    if (status !== "ok") return;
-                    this.currentSnippetId = snippet.id;
-                    this.clearLocalStorage();
-                    $.wa.notice("Сниппет сохранён");
+            const footer = `<button class="button green js-confirm-save">Сохранить</button>
+                            <a href="#" class="js-dialog-close">Отмена</a>`;
+
+            $.waDialog({
+                header: "Сохранить сниппет",
+                content,
+                footer,
+                onOpen: ($wrapper) => {
+                    $wrapper.find("#save-dialog-name").val(this.currentSnippetName);
+                    $wrapper.find("#save-dialog-desc").val(this.currentSnippetDesc);
+                    $wrapper.find("#save-dialog-shared").prop("checked", !!this.isShared);
+                    $wrapper.find("#save-dialog-shared-switch").waSwitch();
+                    if (hasId) {
+                        $wrapper.find("#save-dialog-as-new-switch").waSwitch();
+                    }
+
+                    $wrapper.on("click", ".js-confirm-save", () => {
+                        const newName = $wrapper.find("#save-dialog-name").val().trim();
+                        if (!newName) {
+                            alert("Укажите название сниппета");
+                            $wrapper.find("#save-dialog-name").focus();
+                            return;
+                        }
+
+                        const saveAsNew = hasId && $wrapper.find("#save-dialog-as-new").is(":checked");
+                        const newDesc = $wrapper.find("#save-dialog-desc").val();
+                        const newShared = $wrapper.find("#save-dialog-shared").is(":checked") ? 1 : 0;
+
+                        const data = {
+                            name:        newName,
+                            description: newDesc,
+                            code_php:    this.phpEditor.getValue(),
+                            code_smarty: this.smartyEditor.getValue(),
+                            is_shared:   newShared,
+                        };
+                        if (!saveAsNew && this.currentSnippetId) {
+                            data.id = this.currentSnippetId;
+                        }
+
+                        $.ajax({
+                            url: "?module=backend&action=snippetSave",
+                            type: "POST",
+                            data,
+                            dataType: "json",
+                            success: ({ status, data: snippet }) => {
+                                if (status !== "ok") return;
+                                this.currentSnippetId = snippet.id;
+                                this.#updateMeta(newName, newDesc, newShared);
+                                this.saveToLocalStorage();
+                                $wrapper.trigger("dialog-close");
+                            },
+                        });
+                    });
                 },
             });
         }
@@ -300,33 +363,36 @@
                 dataType: "json",
                 success: ({ status, data: s }) => {
                     if (status !== "ok") return;
-                    $("#snippet-name").val(s.name);
-                    $("#snippet-description").val(s.description ?? "");
                     this.phpEditor.setValue(s.code_php ?? "", -1);
                     this.smartyEditor.setValue(s.code_smarty ?? "", -1);
                     this.currentSnippetId = s.id;
-                    this.isShared = s.is_shared;
-                    this.#updateAccessIcon();
-                    this.clearLocalStorage();
+                    this.#updateMeta(s.name, s.description ?? "", s.is_shared);
+                    this.saveToLocalStorage();
                 },
             });
         }
 
         newSnippet() {
             this.currentSnippetId = null;
-            this.isShared = 0;
-            $("#snippet-name").val("");
-            $("#snippet-description").val("");
             this.phpEditor.setValue("", -1);
             this.smartyEditor.setValue("", -1);
-            this.#updateAccessIcon();
+            this.#updateMeta("", "", 0);
             $("#result-output").html("");
             $("#result-errors").hide().html("");
             this.clearLocalStorage();
         }
 
+        #updateMeta(name, desc, isShared) {
+            this.currentSnippetName = name;
+            this.currentSnippetDesc = desc;
+            this.isShared = isShared ? 1 : 0;
+            $("#snippet-name-display").text(name);
+            $("#snippet-desc-display").text(desc || "");
+            this.#updateAccessIcon();
+        }
+
         #updateAccessIcon() {
-            const $icon = $("#access-toggle");
+            const $icon = $("#access-icon");
             $icon.html(this.isShared ? "&#127760;" : "&#128274;");
             $icon.attr("title", this.isShared ? "Общий доступ" : "Личный");
         }
