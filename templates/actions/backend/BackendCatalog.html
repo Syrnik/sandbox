@@ -1,0 +1,309 @@
+<div class="block">
+    <div class="flexbox middle space-8">
+        <h1 class="wide">Каталог сниппетов</h1>
+        <a href="?module=backend" class="button light-gray">&#8592; Редактор</a>
+        <button id="btn-create-folder" class="button green">&#128193; Создать папку</button>
+        <a href="?module=backend{if $parent_id}&folder_id={$parent_id}{/if}" class="button blue">&#43; Создать сниппет</a>
+        <label class="button light-gray">
+            &#8679; Импорт
+            <input type="file" id="import-file" accept=".json" class="hidden">
+        </label>
+    </div>
+</div>
+
+{if $breadcrumbs}
+<div class="block">
+    <ul class="breadcrumbs inline-list">
+        <li><a href="?module=backend&action=catalog">Корень</a></li>
+        {foreach $breadcrumbs as $crumb}
+        <li><a href="?module=backend&action=catalog&folder_id={$crumb.id}">{$crumb.name|escape}</a></li>
+        {/foreach}
+    </ul>
+</div>
+{/if}
+
+<div class="block">
+    <div class="flexbox wrap space-16" id="catalog-grid">
+
+        {foreach $folders as $folder}
+        <div class="box shadowed sandbox-card" data-id="{$folder.id}" data-type="folder">
+            <div class="block">
+                <div class="flexbox middle space-4">
+                    <span class="icon size-24">&#128193;</span>
+                    <span class="wide bold">{$folder.name|escape}</span>
+                    <span class="hint">{if $folder.is_shared}&#127760;{else}&#128274;{/if}</span>
+                </div>
+                {if $folder.description}
+                <div class="hint small block">{$folder.description|escape|truncate:80}</div>
+                {/if}
+            </div>
+            <div class="block small flexbox middle">
+                <label class="inline-block" onclick="event.stopPropagation()">
+                    <input type="checkbox" class="js-select-item" data-id="{$folder.id}" data-type="folder">
+                </label>
+                <span class="wide"></span>
+                <a href="?module=backend&action=catalog&folder_id={$folder.id}" class="small">Открыть</a>
+                <span class="js-export-folder small" data-id="{$folder.id}" style="cursor:pointer" title="Экспорт">&#8681;</span>
+            </div>
+        </div>
+        {/foreach}
+
+        {foreach $snippets as $snippet}
+        <div class="box shadowed sandbox-card" data-id="{$snippet.id}" data-type="snippet">
+            <div class="block">
+                <div class="flexbox middle space-4">
+                    <span class="icon size-24">&#128161;</span>
+                    <span class="wide bold">{$snippet.name|escape}</span>
+                    <span class="hint">{if $snippet.is_shared}&#127760;{else}&#128274;{/if}</span>
+                </div>
+                {if $snippet.description}
+                <div class="hint small block">{$snippet.description|escape|truncate:80}</div>
+                {/if}
+            </div>
+            <div class="block small flexbox middle">
+                <label class="inline-block" onclick="event.stopPropagation()">
+                    <input type="checkbox" class="js-select-item" data-id="{$snippet.id}" data-type="snippet">
+                </label>
+                <span class="wide"></span>
+                <a href="?module=backend&snippet_id={$snippet.id}" class="small">Открыть</a>
+                <span class="js-export-snippet small" data-id="{$snippet.id}" style="cursor:pointer" title="Экспорт">&#8681;</span>
+            </div>
+        </div>
+        {/foreach}
+
+        {if !$folders && !$snippets}
+        <div class="block hint">Пусто. Создайте папку или сниппет.</div>
+        {/if}
+
+    </div>
+</div>
+
+<div id="bulk-panel" class="block" style="display:none">
+    <div class="flexbox middle space-8">
+        <span>Выбрано: <strong id="selected-count">0</strong></span>
+        <button id="btn-bulk-share" class="button green small">&#127760; Поделиться</button>
+        <button id="btn-bulk-delete" class="button red small">&#128465; Удалить</button>
+    </div>
+</div>
+
+<script>
+{literal}
+(($) => {
+    "use strict";
+
+    class SandboxCatalog {
+        selectedItems = new Map(); // id => type
+
+        init() {
+            this.bindEvents();
+        }
+
+        bindEvents() {
+            // Клик по карточке — открыть
+            $(document).on("click", ".sandbox-card", (e) => {
+                if ($(e.target).is("input, a, span.js-export-snippet, span.js-export-folder")) return;
+                const $card = $(e.currentTarget);
+                const type = $card.data("type");
+                const id = $card.data("id");
+                if (type === "folder") {
+                    location.href = `?module=backend&action=catalog&folder_id=${id}`;
+                } else {
+                    location.href = `?module=backend&snippet_id=${id}`;
+                }
+            });
+
+            // Чекбоксы
+            $(document).on("change", ".js-select-item", (e) => {
+                const $cb = $(e.currentTarget);
+                const id = $cb.data("id");
+                const type = $cb.data("type");
+                if ($cb.is(":checked")) {
+                    this.selectedItems.set(`${type}_${id}`, { id, type });
+                } else {
+                    this.selectedItems.delete(`${type}_${id}`);
+                }
+                this.updateBulkPanel();
+            });
+
+            // Создать папку
+            $("#btn-create-folder").on("click", () => this.showCreateFolderDialog());
+
+            // Bulk actions
+            $("#btn-bulk-share").on("click", () => this.bulkShare());
+            $("#btn-bulk-delete").on("click", () => this.bulkDelete());
+
+            // Экспорт сниппета
+            $(document).on("click", ".js-export-snippet", (e) => {
+                e.stopPropagation();
+                const id = $(e.currentTarget).data("id");
+                this.exportItem("snippet", id);
+            });
+
+            // Экспорт папки
+            $(document).on("click", ".js-export-folder", (e) => {
+                e.stopPropagation();
+                const id = $(e.currentTarget).data("id");
+                this.exportItem("folder", id);
+            });
+
+            // Импорт
+            $("#import-file").on("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => this.importData(ev.target.result);
+                reader.readAsText(file);
+                $(e.target).val("");
+            });
+        }
+
+        updateBulkPanel() {
+            const count = this.selectedItems.size;
+            if (count > 0) {
+                $("#selected-count").text(count);
+                $("#bulk-panel").show();
+            } else {
+                $("#bulk-panel").hide();
+            }
+        }
+
+        showCreateFolderDialog() {
+            const parentId = new URLSearchParams(location.search).get("folder_id") || "";
+            const html = `
+                <div class="dialog-content-padding">
+                    <div class="field">
+                        <div class="name">Название <span class="red">*</span></div>
+                        <div class="value"><input type="text" id="folder-name-input" class="full-width" autofocus></div>
+                    </div>
+                    <div class="field">
+                        <div class="name">Описание</div>
+                        <div class="value"><input type="text" id="folder-desc-input" class="full-width"></div>
+                    </div>
+                    <div class="field">
+                        <label><input type="checkbox" id="folder-shared-input"> Общий доступ</label>
+                    </div>
+                </div>
+            `;
+            $.waDialog({
+                html,
+                header: "Создать папку",
+                buttons: `<button class="button green js-confirm-create-folder">Создать</button>
+                          <a href="#" class="js-wa-dialog-close">Отмена</a>`,
+                onOpen: ($dialog) => {
+                    $dialog.on("click", ".js-confirm-create-folder", () => {
+                        const name = $("#folder-name-input").val().trim();
+                        if (!name) { alert("Укажите название"); return; }
+                        $.ajax({
+                            url: "?module=backend&action=folderSave",
+                            type: "POST",
+                            data: {
+                                name,
+                                description: $("#folder-desc-input").val(),
+                                is_shared: $("#folder-shared-input").is(":checked") ? 1 : 0,
+                                parent_id: parentId || "",
+                            },
+                            dataType: "json",
+                            success: ({ status }) => {
+                                if (status === "ok") location.reload();
+                            },
+                        });
+                    });
+                },
+            });
+        }
+
+        bulkShare() {
+            const snippetIds = [];
+            this.selectedItems.forEach(({ id, type }) => {
+                if (type === "snippet") snippetIds.push(id);
+            });
+            if (!snippetIds.length) { alert("Выберите сниппеты"); return; }
+
+            // Share each snippet by saving with is_shared=1
+            const promises = snippetIds.map(id =>
+                $.ajax({
+                    url: "?module=backend&action=snippetSave",
+                    type: "POST",
+                    data: { id, is_shared: 1, name: "_placeholder_" },
+                    dataType: "json",
+                })
+            );
+            $.when(...promises).then(() => location.reload());
+        }
+
+        bulkDelete() {
+            if (!confirm("Удалить выбранные элементы?")) return;
+
+            const snippetIds = [];
+            const folderIds = [];
+            this.selectedItems.forEach(({ id, type }) => {
+                if (type === "snippet") snippetIds.push(id);
+                if (type === "folder") folderIds.push(id);
+            });
+
+            const requests = [];
+            if (snippetIds.length) {
+                requests.push($.ajax({
+                    url: "?module=backend&action=snippetDelete",
+                    type: "POST",
+                    data: { ids: snippetIds },
+                    dataType: "json",
+                }));
+            }
+            folderIds.forEach(id => {
+                requests.push($.ajax({
+                    url: "?module=backend&action=folderDelete",
+                    type: "POST",
+                    data: { id },
+                    dataType: "json",
+                }));
+            });
+
+            if (requests.length) {
+                $.when(...requests).then(() => location.reload());
+            }
+        }
+
+        exportItem(type, id) {
+            $.ajax({
+                url: "?module=backend&action=export",
+                data: { type, id },
+                cache: true,
+                dataType: "json",
+                success: ({ status, data }) => {
+                    if (status !== "ok") return;
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `sandbox_${type}_${id}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                },
+            });
+        }
+
+        importData(jsonText) {
+            $.ajax({
+                url: "?module=backend&action=import",
+                type: "POST",
+                data: { data: jsonText },
+                dataType: "json",
+                success: ({ status }) => {
+                    if (status === "ok") {
+                        $.wa.notice("Импорт выполнен");
+                        location.reload();
+                    }
+                },
+            });
+        }
+    }
+
+    $(() => {
+        const catalog = new SandboxCatalog();
+        catalog.init();
+    });
+
+})(jQuery);
+{/literal}
+</script>

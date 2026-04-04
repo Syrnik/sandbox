@@ -1,0 +1,312 @@
+<div class="block">
+    <div class="flexbox space-8 middle">
+        <div class="wide">
+            <div class="flexbox space-8 middle">
+                <input type="text" id="snippet-name" class="bold" placeholder="Название сниппета" style="">
+                <span id="access-toggle" class="sandbox-access-icon" title="Личный">&#128274;</span>
+            </div>
+        </div>
+        <div>
+            <select id="environment-select" class="full-width">
+                <option value="">— Без окружения —</option>
+                {foreach $environments as $env}
+                <option value="{$env.id}">{$env.name|escape}</option>
+                {/foreach}
+            </select>
+        </div>
+        <div>
+            <a href="?module=backend&action=catalog" class="button light-gray">Каталог сниппетов</a>
+            <a href="?module=backend&action=environments" class="button light-gray">Окружения</a>
+        </div>
+    </div>
+</div>
+
+<div class="block">
+    <div class="flexbox space-8 middle">
+        <div>
+            <select id="recent-snippets" class="">
+                <option value="">— Недавние сниппеты —</option>
+                {foreach $recent_snippets as $s}
+                <option value="{$s.id}" class="js-load-snippet">{$s.name|escape}</option>
+                {/foreach}
+            </select>
+        </div>
+        <div>
+            <label class="inline-block">
+                <input type="checkbox" id="smarty-toggle"> Smarty
+            </label>
+        </div>
+        <div class="wide"></div>
+        <div id="execution-time" class="sandbox-execution-time"></div>
+    </div>
+</div>
+
+<div class="flexbox space-16">
+    <div class="wide">
+        <div class="box shadowed block">
+            <div class="block small"><strong>PHP</strong></div>
+            <div class="sandbox-editor-container" id="php-editor"></div>
+        </div>
+
+        <div id="smarty-editor-wrapper" class="box shadowed block" style="display:none">
+            <div class="block small"><strong>Smarty</strong></div>
+            <div class="sandbox-editor-container" id="smarty-editor"></div>
+        </div>
+
+        <div class="block">
+            <input type="text" id="snippet-description" placeholder="Описание (необязательно)" class="full-width">
+        </div>
+
+        <div class="block">
+            <button id="btn-execute" class="button green">&#9654; Выполнить</button>
+            <button id="btn-save" class="button blue">&#128190; Сохранить</button>
+            <button id="btn-new" class="button light-gray">Новый</button>
+        </div>
+    </div>
+
+    <div style="width:40%">
+        <div class="box shadowed block">
+            <div class="block small flexbox middle space-8">
+                <strong class="wide">Результат</strong>
+                <button id="btn-clear-result" class="button light-gray small">Очистить</button>
+            </div>
+            <div id="result-output" class="sandbox-result-panel"></div>
+            <div id="result-errors" class="sandbox-error" style="display:none"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.36.5/ace.js"></script>
+<script>
+{literal}
+(($) => {
+    "use strict";
+
+    const STORAGE_KEY = "sandbox_editor_state";
+
+    class SandboxEditor {
+        currentSnippetId = null;
+        phpEditor = null;
+        smartyEditor = null;
+        isShared = 0;
+
+        init() {
+            this.initEditors();
+            this.bindEvents();
+            this.restoreFromLocalStorage();
+            this.#initAutoSave();
+
+            const urlParams = new URLSearchParams(location.search);
+            const snippetId = urlParams.get('snippet_id');
+            if (snippetId) {
+                this.loadSnippet(parseInt(snippetId, 10));
+            }
+        }
+
+        initEditors() {
+            this.phpEditor = ace.edit("php-editor");
+            this.phpEditor.session.setMode("ace/mode/php");
+            this.phpEditor.setTheme("ace/theme/monokai");
+            this.phpEditor.setOptions({ fontSize: "14px", showPrintMargin: false });
+
+            this.smartyEditor = ace.edit("smarty-editor");
+            this.smartyEditor.session.setMode("ace/mode/smarty");
+            this.smartyEditor.setTheme("ace/theme/monokai");
+            this.smartyEditor.setOptions({ fontSize: "14px", showPrintMargin: false });
+        }
+
+        bindEvents() {
+            $("#btn-execute").on("click", () => this.execute());
+            $("#btn-save").on("click", () => this.save());
+            $("#btn-new").on("click", () => this.newSnippet());
+            $("#btn-clear-result").on("click", () => {
+                $("#result-output").html("");
+                $("#result-errors").hide().html("");
+            });
+
+            $("#smarty-toggle").on("change", function () {
+                $("#smarty-editor-wrapper").toggle(this.checked);
+            });
+
+            $("#access-toggle").on("click", () => {
+                this.isShared = this.isShared ? 0 : 1;
+                this.#updateAccessIcon();
+            });
+
+            $("#recent-snippets").on("change", (e) => {
+                const id = parseInt($(e.currentTarget).val(), 10);
+                if (id) this.loadSnippet(id);
+                $(e.currentTarget).val("");
+            });
+        }
+
+        saveToLocalStorage() {
+            try {
+                const state = {
+                    code_php:       this.phpEditor.getValue(),
+                    code_smarty:    this.smartyEditor.getValue(),
+                    smarty_visible: $("#smarty-toggle").is(":checked"),
+                    environment_id: $("#environment-select").val() ?? "",
+                    snippet_name:   $("#snippet-name").val() ?? "",
+                    timestamp:      Date.now(),
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch {
+                // localStorage недоступен — молча игнорируем
+            }
+        }
+
+        restoreFromLocalStorage() {
+            const urlParams = new URLSearchParams(location.search);
+            if (urlParams.get("snippet_id")) return;
+
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+
+                const state = JSON.parse(raw);
+
+                if (state.code_php)    this.phpEditor.setValue(state.code_php, -1);
+                if (state.code_smarty) this.smartyEditor.setValue(state.code_smarty, -1);
+
+                if (state.smarty_visible) {
+                    $("#smarty-toggle").prop("checked", true).trigger("change");
+                }
+                if (state.environment_id) {
+                    $("#environment-select").val(state.environment_id);
+                }
+                if (state.snippet_name) {
+                    $("#snippet-name").val(state.snippet_name);
+                }
+            } catch {
+                // Повреждённые данные — молча игнорируем
+            }
+        }
+
+        clearLocalStorage() {
+            try { localStorage.removeItem(STORAGE_KEY); } catch {}
+        }
+
+        execute() {
+            this.saveToLocalStorage();
+
+            const data = {
+                code_php:       this.phpEditor.getValue(),
+                code_smarty:    this.smartyEditor.getValue(),
+                environment_id: $("#environment-select").val(),
+            };
+
+            $("#btn-execute").prop("disabled", true).text("Выполняется...");
+
+            $.ajax({
+                url: "?module=backend&action=snippetExecute",
+                type: "POST",
+                data,
+                dataType: "json",
+                success: ({ status, data: result }) => {
+                    if (status !== "ok") return;
+                    $("#result-output").html(result.output || "<em class='hint'>Нет вывода</em>");
+                    if (result.error) {
+                        $("#result-errors").html(`<pre>${result.error}</pre>`).show();
+                    } else {
+                        $("#result-errors").hide().html("");
+                    }
+                    if (result.execution_time) {
+                        $("#execution-time").text(`${result.execution_time}s`);
+                    }
+                },
+                complete: () => {
+                    $("#btn-execute").prop("disabled", false).html("&#9654; Выполнить");
+                },
+            });
+        }
+
+        save() {
+            const name = $("#snippet-name").val().trim();
+            if (!name) {
+                alert("Укажите название сниппета");
+                $("#snippet-name").focus();
+                return;
+            }
+
+            const data = {
+                id:          this.currentSnippetId ?? "",
+                name,
+                description: $("#snippet-description").val(),
+                code_php:    this.phpEditor.getValue(),
+                code_smarty: this.smartyEditor.getValue(),
+                is_shared:   this.isShared,
+            };
+
+            $.ajax({
+                url: "?module=backend&action=snippetSave",
+                type: "POST",
+                data,
+                dataType: "json",
+                success: ({ status, data: snippet }) => {
+                    if (status !== "ok") return;
+                    this.currentSnippetId = snippet.id;
+                    this.clearLocalStorage();
+                    $.wa.notice("Сниппет сохранён");
+                },
+            });
+        }
+
+        loadSnippet(id) {
+            $.ajax({
+                url: "?module=backend&action=snippet",
+                data: { id },
+                cache: true,
+                dataType: "json",
+                success: ({ status, data: s }) => {
+                    if (status !== "ok") return;
+                    $("#snippet-name").val(s.name);
+                    $("#snippet-description").val(s.description ?? "");
+                    this.phpEditor.setValue(s.code_php ?? "", -1);
+                    this.smartyEditor.setValue(s.code_smarty ?? "", -1);
+                    this.currentSnippetId = s.id;
+                    this.isShared = s.is_shared;
+                    this.#updateAccessIcon();
+                    this.clearLocalStorage();
+                },
+            });
+        }
+
+        newSnippet() {
+            this.currentSnippetId = null;
+            this.isShared = 0;
+            $("#snippet-name").val("");
+            $("#snippet-description").val("");
+            this.phpEditor.setValue("", -1);
+            this.smartyEditor.setValue("", -1);
+            this.#updateAccessIcon();
+            $("#result-output").html("");
+            $("#result-errors").hide().html("");
+            this.clearLocalStorage();
+        }
+
+        #updateAccessIcon() {
+            const $icon = $("#access-toggle");
+            $icon.html(this.isShared ? "&#127760;" : "&#128274;");
+            $icon.attr("title", this.isShared ? "Общий доступ" : "Личный");
+        }
+
+        #initAutoSave() {
+            let timer = null;
+            const debouncedSave = () => {
+                clearTimeout(timer);
+                timer = setTimeout(() => this.saveToLocalStorage(), 1000);
+            };
+            this.phpEditor.on("change", debouncedSave);
+            this.smartyEditor.on("change", debouncedSave);
+        }
+    }
+
+    $(() => {
+        const editor = new SandboxEditor();
+        editor.init();
+    });
+
+})(jQuery);
+{/literal}
+</script>

@@ -1,0 +1,62 @@
+<?php
+return [
+    'sandbox_folder' => [
+        'id'              => ['int', 11, 'null' => 0, 'autoincrement' => 1],
+        'parent_id'       => ['int', 11, 'null' => 1],
+        'contact_id'      => ['int', 11, 'null' => 0],
+        'name'            => ['varchar', 255, 'null' => 0],
+        'description'     => ['text', null, 'null' => 1],
+        'is_shared'       => ['tinyint', 1, 'null' => 0, 'default' => 0],
+        'sort'            => ['int', 11, 'null' => 0, 'default' => 0],
+        'create_datetime' => ['datetime', null, 'null' => 0],
+        'update_datetime' => ['datetime', null, 'null' => 1],
+        ':keys' => [
+            'PRIMARY'    => 'id',
+            'contact_id' => 'contact_id',
+            'parent_id'  => 'parent_id',
+        ],
+    ],
+    'sandbox_snippet' => [
+        'id'              => ['int', 11, 'null' => 0, 'autoincrement' => 1],
+        'folder_id'       => ['int', 11, 'null' => 1],
+        'contact_id'      => ['int', 11, 'null' => 0],
+        'name'            => ['varchar', 255, 'null' => 0],
+        'description'     => ['text', null, 'null' => 1],
+        'code_php'        => ['mediumtext', null, 'null' => 1],
+        'code_smarty'     => ['mediumtext', null, 'null' => 1],
+        'is_shared'       => ['tinyint', 1, 'null' => 0, 'default' => 0],
+        'sort'            => ['int', 11, 'null' => 0, 'default' => 0],
+        'create_datetime' => ['datetime', null, 'null' => 0],
+        'update_datetime' => ['datetime', null, 'null' => 1],
+        ':keys' => [
+            'PRIMARY'    => 'id',
+            'contact_id' => 'contact_id',
+            'folder_id'  => 'folder_id',
+        ],
+    ],
+    'sandbox_environment' => [
+        'id'              => ['int', 11, 'null' => 0, 'autoincrement' => 1],
+        'contact_id'      => ['int', 11, 'null' => 0],
+        'name'            => ['varchar', 255, 'null' => 0],
+        'is_shared'       => ['tinyint', 1, 'null' => 0, 'default' => 0],
+        'variables'       => ['text', null, 'null' => 1],
+        'create_datetime' => ['datetime', null, 'null' => 0],
+        'update_datetime' => ['datetime', null, 'null' => 1],
+        ':keys' => [
+            'PRIMARY'    => 'id',
+            'contact_id' => 'contact_id',
+        ],
+    ],
+    'sandbox_variable' => [
+        'id'              => ['int', 11, 'null' => 0, 'autoincrement' => 1],
+        'contact_id'      => ['int', 11, 'null' => 0],
+        'name'            => ['varchar', 255, 'null' => 0],
+        'value'           => ['mediumtext', null, 'null' => 1],
+        'create_datetime' => ['datetime', null, 'null' => 0],
+        'update_datetime' => ['datetime', null, 'null' => 1],
+        ':keys' => [
+            'PRIMARY'      => 'id',
+            'contact_name' => ['unique' => true, 'contact_id', 'name'],
+        ],
+    ],
+];
