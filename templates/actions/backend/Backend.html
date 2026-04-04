@@ -1,81 +1,84 @@
-<div class="block">
-    <div class="flexbox space-8 middle">
-        <div class="wide">
+<div class="content">
+    <div class="box contentbox">
+        <div class="block">
             <div class="flexbox space-8 middle">
-                <input type="text" id="snippet-name" class="bold" placeholder="Название сниппета" style="">
-                <span id="access-toggle" class="sandbox-access-icon" title="Личный">&#128274;</span>
+                <div class="wide">
+                    <div class="flexbox space-8 middle">
+                        <input type="text" id="snippet-name" class="bold" placeholder="Название сниппета" style="">
+                        <span id="access-toggle" class="sandbox-access-icon" title="Личный">&#128274;</span>
+                    </div>
+                </div>
+                <div>
+                    <select id="environment-select" class="full-width">
+                        <option value="">— Без окружения —</option>
+                        {foreach $environments as $env}
+                        <option value="{$env.id}">{$env.name|escape}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div>
+                    <a href="?module=backend&action=catalog" class="button light-gray">Каталог сниппетов</a>
+                    <a href="?module=backend&action=environments" class="button light-gray">Окружения</a>
+                </div>
             </div>
-        </div>
-        <div>
-            <select id="environment-select" class="full-width">
-                <option value="">— Без окружения —</option>
-                {foreach $environments as $env}
-                <option value="{$env.id}">{$env.name|escape}</option>
-                {/foreach}
-            </select>
-        </div>
-        <div>
-            <a href="?module=backend&action=catalog" class="button light-gray">Каталог сниппетов</a>
-            <a href="?module=backend&action=environments" class="button light-gray">Окружения</a>
-        </div>
-    </div>
-</div>
-
-<div class="block">
-    <div class="flexbox space-8 middle">
-        <div>
-            <select id="recent-snippets" class="">
-                <option value="">— Недавние сниппеты —</option>
-                {foreach $recent_snippets as $s}
-                <option value="{$s.id}" class="js-load-snippet">{$s.name|escape}</option>
-                {/foreach}
-            </select>
-        </div>
-        <div>
-            <label class="inline-block">
-                <input type="checkbox" id="smarty-toggle"> Smarty
-            </label>
-        </div>
-        <div class="wide"></div>
-        <div id="execution-time" class="sandbox-execution-time"></div>
-    </div>
-</div>
-
-<div class="flexbox space-16">
-    <div class="wide">
-        <div class="box shadowed block">
-            <div class="block small"><strong>PHP</strong></div>
-            <div class="sandbox-editor-container" id="php-editor"></div>
-        </div>
-
-        <div id="smarty-editor-wrapper" class="box shadowed block" style="display:none">
-            <div class="block small"><strong>Smarty</strong></div>
-            <div class="sandbox-editor-container" id="smarty-editor"></div>
         </div>
 
         <div class="block">
-            <input type="text" id="snippet-description" placeholder="Описание (необязательно)" class="full-width">
-        </div>
-
-        <div class="block">
-            <button id="btn-execute" class="button green">&#9654; Выполнить</button>
-            <button id="btn-save" class="button blue">&#128190; Сохранить</button>
-            <button id="btn-new" class="button light-gray">Новый</button>
-        </div>
-    </div>
-
-    <div style="width:40%">
-        <div class="box shadowed block">
-            <div class="block small flexbox middle space-8">
-                <strong class="wide">Результат</strong>
-                <button id="btn-clear-result" class="button light-gray small">Очистить</button>
+            <div class="flexbox space-8 middle">
+                <div>
+                    <select id="recent-snippets" class="">
+                        <option value="">— Недавние сниппеты —</option>
+                        {foreach $recent_snippets as $s}
+                        <option value="{$s.id}" class="js-load-snippet">{$s.name|escape}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div>
+                    <label class="inline-block">
+                        <input type="checkbox" id="smarty-toggle"> Smarty
+                    </label>
+                </div>
+                <div class="wide"></div>
+                <div id="execution-time" class="sandbox-execution-time"></div>
             </div>
-            <div id="result-output" class="sandbox-result-panel"></div>
-            <div id="result-errors" class="sandbox-error" style="display:none"></div>
+        </div>
+
+        <div class="flexbox space-16">
+            <div class="wide">
+                <div class="box shadowed block">
+                    <div class="block small"><strong>PHP</strong></div>
+                    <div class="sandbox-editor-container" id="php-editor"></div>
+                </div>
+
+                <div id="smarty-editor-wrapper" class="box shadowed block" style="display:none">
+                    <div class="block small"><strong>Smarty</strong></div>
+                    <div class="sandbox-editor-container" id="smarty-editor"></div>
+                </div>
+
+                <div class="block">
+                    <input type="text" id="snippet-description" placeholder="Описание (необязательно)" class="full-width">
+                </div>
+
+                <div class="block">
+                    <button id="btn-execute" class="button green">&#9654; Выполнить</button>
+                    <button id="btn-save" class="button blue">&#128190; Сохранить</button>
+                    <button id="btn-new" class="button light-gray">Новый</button>
+                </div>
+            </div>
+
+            <div style="width:40%">
+                <div class="box shadowed block">
+                    <div class="block small flexbox middle space-8">
+                        <strong class="wide">Результат</strong>
+                        <button id="btn-clear-result" class="button light-gray small">Очистить</button>
+                    </div>
+                    <div id="result-output" class="sandbox-result-panel"></div>
+                    <div id="result-errors" class="sandbox-error" style="display:none"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.36.5/ace.js"></script>
 <script>
 {literal}
