@@ -9,12 +9,14 @@
                     </div>
                 </div>
                 <div>
-                    <select id="environment-select" class="full-width">
-                        <option value="">— Без окружения —</option>
-                        {foreach $environments as $env}
-                        <option value="{$env.id}">{$env.name|escape}</option>
-                        {/foreach}
-                    </select>
+                    <div class="wa-select">
+                        <select id="environment-select">
+                            <option value="">— Без окружения —</option>
+                            {foreach $environments as $env}
+                            <option value="{$env.id}">{$env.name|escape}</option>
+                            {/foreach}
+                        </select>
+                    </div>
                 </div>
                 <div>
                     <a href="?module=backend&action=catalog" class="button light-gray">Каталог сниппетов</a>
@@ -26,16 +28,26 @@
         <div class="block">
             <div class="flexbox space-8 middle">
                 <div>
-                    <select id="recent-snippets" class="">
-                        <option value="">— Недавние сниппеты —</option>
-                        {foreach $recent_snippets as $s}
-                        <option value="{$s.id}" class="js-load-snippet">{$s.name|escape}</option>
-                        {/foreach}
-                    </select>
+                    <div class="wa-select">
+                        <select id="recent-snippets">
+                            <option value="">— Недавние сниппеты —</option>
+                            {foreach $recent_snippets as $s}
+                            <option value="{$s.id}" class="js-load-snippet">{$s.name|escape}</option>
+                            {/foreach}
+                        </select>
+                    </div>
                 </div>
                 <div>
                     <label class="inline-block">
-                        <input type="checkbox" id="smarty-toggle"> Smarty
+                        <span class="wa-checkbox">
+                            <input type="checkbox" id="smarty-toggle">
+                            <span>
+                                <span class="icon">
+                                    <i class="wa-icon wa-icon-check"></i>
+                                </span>
+                            </span>
+                        </span>
+                        Smarty
                     </label>
                 </div>
                 <div class="wide"></div>
@@ -60,9 +72,9 @@
                 </div>
 
                 <div class="block sandbox-editor-footer">
-                    <button id="btn-execute" class="button green">&#9654; Выполнить</button>
-                    <button id="btn-save" class="button blue">&#128190; Сохранить</button>
-                    <button id="btn-new" class="button light-gray">Новый</button>
+                    <button type="button" id="btn-execute" class="button green">&#9654; Выполнить</button>
+                    <button type="button" id="btn-save" class="button blue">&#128190; Сохранить</button>
+                    <button type="button" id="btn-new" class="button light-gray">Новый</button>
                 </div>
             </div>
 
@@ -70,7 +82,7 @@
                 <div class="sandbox-result-box box shadowed">
                     <div class="block small flexbox middle space-8">
                         <strong class="wide">Результат</strong>
-                        <button id="btn-clear-result" class="button light-gray small">Очистить</button>
+                        <button type="button" id="btn-clear-result" class="button light-gray small">Очистить</button>
                     </div>
                     <div id="result-output" class="sandbox-result-panel"></div>
                     <div id="result-errors" class="sandbox-error" style="display:none"></div>
