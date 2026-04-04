@@ -8,7 +8,7 @@
                             <div id="snippet-name-display" class="bold" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
                             <p id="snippet-desc-display" class="hint" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:2px 0 0"></p>
                         </div>
-                        <span id="access-icon" class="sandbox-access-icon" title="Личный">&#128274;</span>
+                        <span id="access-icon" class="sandbox-access-icon" title="Личный"><i class="fas fa-lock text-yellow"></i></span>
                     </div>
                 </div>
                 <div>
@@ -71,8 +71,8 @@
                 </div>
 
                 <div class="box sandbox-editor-footer">
-                    <button type="button" id="btn-execute" class="button green">&#9654; Выполнить</button>
-                    <button type="button" id="btn-save" class="button blue">&#128190; Сохранить</button>
+                    <button type="button" id="btn-execute" class="button green"><i class="fas fa-play"></i> Выполнить</button>
+                    <button type="button" id="btn-save" class="button blue"><i class="fas fa-save"></i> Сохранить</button>
                     <button type="button" id="btn-new" class="button light-gray">Новый</button>
                 </div>
             </div>
@@ -236,7 +236,7 @@
                 environment_id: $("#environment-select").val(),
             };
 
-            $("#btn-execute").prop("disabled", true).text("Выполняется...");
+            $("#btn-execute").prop("disabled", true).html('<i class="fas fa-spinner wa-animation-spin speed-1000"></i> Выполнить');
 
             $.ajax({
                 url: "?module=backend&action=snippetExecute",
@@ -256,7 +256,7 @@
                     }
                 },
                 complete: () => {
-                    $("#btn-execute").prop("disabled", false).html("&#9654; Выполнить");
+                    $("#btn-execute").prop("disabled", false).html('<i class="fas fa-play"></i> Выполнить');
                 },
             });
         }
@@ -393,7 +393,7 @@
 
         #updateAccessIcon() {
             const $icon = $("#access-icon");
-            $icon.html(this.isShared ? "&#127760;" : "&#128274;");
+            $icon.html(this.isShared ? '<i class="fas fa-globe text-blue"></i>' : '<i class="fas fa-lock text-yellow"></i>');
             $icon.attr("title", this.isShared ? "Общий доступ" : "Личный");
         }
 

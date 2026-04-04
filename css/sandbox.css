@@ -78,13 +78,9 @@
 
 /* Иконка доступа */
 .sandbox-access-icon {
-    cursor: pointer;
+    cursor: default;
     font-size: 1.2em;
     opacity: 0.6;
-    transition: opacity 0.2s;
-}
-.sandbox-access-icon:hover {
-    opacity: 1;
 }
 
 /* Карточка в каталоге */

@@ -31,7 +31,7 @@
                 <div class="flexbox middle space-4">
                     <span class="icon size-24">&#128193;</span>
                     <span class="wide bold">{$folder.name|escape}</span>
-                    <span class="hint">{if $folder.is_shared}&#127760;{else}&#128274;{/if}</span>
+                    <span class="hint">{if $folder.is_shared}<i class="fas fa-globe text-blue"></i>{else}<i class="fas fa-lock text-yellow"></i>{/if}</span>
                 </div>
                 {if $folder.description}
                 <div class="hint small block">{$folder.description|escape|truncate:80}</div>
@@ -54,7 +54,7 @@
                 <div class="flexbox middle space-4">
                     <span class="icon size-24">&#128161;</span>
                     <span class="wide bold">{$snippet.name|escape}</span>
-                    <span class="hint">{if $snippet.is_shared}&#127760;{else}&#128274;{/if}</span>
+                    <span class="hint">{if $snippet.is_shared}<i class="fas fa-globe text-blue"></i>{else}<i class="fas fa-lock text-yellow"></i>{/if}</span>
                 </div>
                 {if $snippet.description}
                 <div class="hint small block">{$snippet.description|escape|truncate:80}</div>
