@@ -43,31 +43,31 @@
             </div>
         </div>
 
-        <div class="flexbox space-16">
-            <div class="wide">
-                <div class="box shadowed block">
+        <div class="sandbox-editor-layout">
+            <div class="sandbox-editors-column">
+                <div class="sandbox-editor-box box shadowed">
                     <div class="block small"><strong>PHP</strong></div>
                     <div class="sandbox-editor-container" id="php-editor"></div>
                 </div>
 
-                <div id="smarty-editor-wrapper" class="box shadowed block" style="display:none">
+                <div id="smarty-editor-wrapper" class="sandbox-editor-box box shadowed" style="display:none">
                     <div class="block small"><strong>Smarty</strong></div>
                     <div class="sandbox-editor-container" id="smarty-editor"></div>
                 </div>
 
-                <div class="block">
+                <div class="block sandbox-editor-footer">
                     <input type="text" id="snippet-description" placeholder="Описание (необязательно)" class="full-width">
                 </div>
 
-                <div class="block">
+                <div class="block sandbox-editor-footer">
                     <button id="btn-execute" class="button green">&#9654; Выполнить</button>
                     <button id="btn-save" class="button blue">&#128190; Сохранить</button>
                     <button id="btn-new" class="button light-gray">Новый</button>
                 </div>
             </div>
 
-            <div style="width:40%">
-                <div class="box shadowed block">
+            <div class="sandbox-result-column">
+                <div class="sandbox-result-box box shadowed">
                     <div class="block small flexbox middle space-8">
                         <strong class="wide">Результат</strong>
                         <button id="btn-clear-result" class="button light-gray small">Очистить</button>
@@ -127,8 +127,13 @@
                 $("#result-errors").hide().html("");
             });
 
-            $("#smarty-toggle").on("change", function () {
-                $("#smarty-editor-wrapper").toggle(this.checked);
+            $("#smarty-toggle").on("change", (e) => {
+                const visible = e.target.checked;
+                $("#smarty-editor-wrapper").toggle(visible);
+                setTimeout(() => {
+                    this.phpEditor.resize();
+                    if (visible) this.smartyEditor.resize();
+                }, 0);
             });
 
             $("#access-toggle").on("click", () => {
