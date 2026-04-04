@@ -106,3 +106,20 @@
 #snippet-name {
     min-width: 300px;
 }
+
+/* Блок заголовка сниппета: предотвращение flex-переполнения */
+.sandbox-snippet-header {
+    min-width: 0;
+}
+.sandbox-snippet-header > .flexbox {
+    min-width: 0;
+}
+.sandbox-snippet-text {
+    min-width: 0;
+    flex: 1;
+}
+#snippet-name-display,
+#snippet-desc-display {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
