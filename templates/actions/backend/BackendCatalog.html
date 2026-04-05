@@ -1,105 +1,139 @@
-<div class="block">
-    <div class="flexbox middle space-8">
-        <h1 class="wide">Каталог сниппетов</h1>
-        <a href="?module=backend" class="button light-gray">&#8592; Редактор</a>
-        <button id="btn-create-folder" class="button green">&#128193; Создать папку</button>
-        <a href="?module=backend{if $parent_id}&folder_id={$parent_id}{/if}" class="button blue">&#43; Создать сниппет</a>
-        <label class="button light-gray">
-            &#8679; Импорт
-            <input type="file" id="import-file" accept=".json" class="hidden">
-        </label>
-    </div>
-</div>
-
-{if $breadcrumbs}
-<div class="block">
-    <ul class="breadcrumbs inline-list">
-        <li><a href="?module=backend&action=catalog">Корень</a></li>
-        {foreach $breadcrumbs as $crumb}
-        <li><a href="?module=backend&action=catalog&folder_id={$crumb.id}">{$crumb.name|escape}</a></li>
-        {/foreach}
-    </ul>
-</div>
-{/if}
-
-<div class="block">
-    <div class="flexbox wrap space-16" id="catalog-grid">
-
-        {foreach $folders as $folder}
-        <div class="box shadowed sandbox-card" data-id="{$folder.id}" data-type="folder">
-            <div class="block">
-                <div class="flexbox middle space-4">
-                    <span class="icon size-24">&#128193;</span>
-                    <span class="wide bold">{$folder.name|escape}</span>
-                    <span class="hint">{if $folder.is_shared}<i class="fas fa-globe text-blue"></i>{else}<i class="fas fa-lock text-yellow"></i>{/if}</span>
-                </div>
-                {if $folder.description}
-                <div class="hint small block">{$folder.description|escape|truncate:80}</div>
-                {/if}
-            </div>
-            <div class="block small flexbox middle">
-                <label class="inline-block" onclick="event.stopPropagation()">
-                    <input type="checkbox" class="js-select-item" data-id="{$folder.id}" data-type="folder">
+<div class="content">
+    <div class="box contentbox">
+        <div class="box">
+            <div class="flexbox middle space-8">
+                <h1 class="wide">Каталог сниппетов</h1>
+                <a href="?module=backend" class="button light-gray">&#8592; Редактор</a>
+                <button id="btn-create-folder" class="button green">&#128193; Создать папку</button>
+                <a href="?module=backend{if $parent_id}&folder_id={$parent_id}{/if}" class="button blue">&#43; Создать
+                    сниппет</a>
+                <label class="button light-gray">
+                    &#8679; Импорт
+                    <input type="file" id="import-file" accept=".json" class="hidden">
                 </label>
-                <span class="wide"></span>
-                <a href="?module=backend&action=catalog&folder_id={$folder.id}" class="small">Открыть</a>
-                <span class="js-export-folder small" data-id="{$folder.id}" style="cursor:pointer" title="Экспорт">&#8681;</span>
             </div>
         </div>
-        {/foreach}
 
-        {foreach $snippets as $snippet}
-        <div class="box shadowed sandbox-card" data-id="{$snippet.id}" data-type="snippet">
-            <div class="block">
-                <div class="flexbox middle space-4">
-                    <span class="icon size-24">&#128161;</span>
-                    <span class="wide bold">{$snippet.name|escape}</span>
-                    <span class="hint">{if $snippet.is_shared}<i class="fas fa-globe text-blue"></i>{else}<i class="fas fa-lock text-yellow"></i>{/if}</span>
-                </div>
-                {if $snippet.description}
-                <div class="hint small block">{$snippet.description|escape|truncate:80}</div>
-                {/if}
+        {if $breadcrumbs}
+            <div class="box">
+                <ul class="breadcrumbs inline-list">
+                    <li><a href="?module=backend&action=catalog">Корень</a></li>
+                    {foreach $breadcrumbs as $crumb}
+                        <li><a href="?module=backend&action=catalog&folder_id={$crumb.id}">{$crumb.name|escape}</a></li>
+                    {/foreach}
+                </ul>
             </div>
-            <div class="block small flexbox middle">
-                <label class="inline-block" onclick="event.stopPropagation()">
-                    <input type="checkbox" class="js-select-item" data-id="{$snippet.id}" data-type="snippet">
-                </label>
-                <span class="wide"></span>
-                <a href="?module=backend&snippet_id={$snippet.id}" class="small">Открыть</a>
-                <span class="js-export-snippet small" data-id="{$snippet.id}" style="cursor:pointer" title="Экспорт">&#8681;</span>
-            </div>
-        </div>
-        {/foreach}
-
-        {if !$folders && !$snippets}
-        <div class="block hint">Пусто. Создайте папку или сниппет.</div>
         {/if}
 
+        <div class="box">
+            <div class="flexbox wrap space-16" id="catalog-grid">
+
+                {foreach $folders as $folder}
+                    <div class="box shadowed sandbox-card" data-id="{$folder.id}" data-type="folder">
+                        <div>
+                            <div class="flexbox middle space-4">
+                                <span class="icon size-24">&#128193;</span>
+                                <span class="wide bold">{$folder.name|escape}</span>
+                                <span class="hint">{if $folder.is_shared}
+
+                                        <i class="fas fa-globe text-blue"></i>
+
+{else}
+
+                                        <i class="fas fa-lock text-yellow"></i>
+                                    {/if}</span>
+                            </div>
+                            {if $folder.description}
+                                <div class="hint small box">{$folder.description|escape|truncate:80}</div>
+                            {/if}
+                        </div>
+                        <div class="small flexbox middle">
+                            <label class="inline-block" onclick="event.stopPropagation()">
+                                <span class="wa-checkbox">
+                                    <input type="checkbox" class="js-select-item" data-id="{$folder.id}" data-type="folder">
+                                    <span>
+                                        <span class="icon">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </span>
+                                </span>
+                            </label>
+                            <span class="wide"></span>
+                            <a href="?module=backend&action=catalog&folder_id={$folder.id}" class="small">Открыть</a>
+                            <button type="button" class="button nobutton js-export-folder smaller" data-id="{$folder.id}"
+                                    title="Скачать"><i class="fas fa-file-download"></i> Скачать</button>
+                        </div>
+                    </div>
+                {/foreach}
+
+                {foreach $snippets as $snippet}
+                    <div class="box shadowed sandbox-card" data-id="{$snippet.id}" data-type="snippet">
+                        <div>
+                            <div class="flexbox middle space-4">
+                                <span><i class="fab fa-php"></i></span>
+                                <span class="wide bold">{$snippet.name|escape}</span>
+                                <span class="hint">{if $snippet.is_shared}
+
+                                        <i class="fas fa-globe text-blue"></i>
+
+{else}
+
+                                        <i class="fas fa-lock text-yellow"></i>
+                                    {/if}</span>
+                            </div>
+                            {if $snippet.description}
+                                <div class="hint small">{$snippet.description|escape|truncate:80}</div>
+                            {/if}
+                        </div>
+                        <div class="small flexbox middle">
+                            <label class="inline-block" onclick="event.stopPropagation()">
+                                <span class="wa-checkbox">
+                                    <input type="checkbox" class="js-select-item" data-id="{$snippet.id}"
+                                           data-type="snippet">
+                                    <span>
+                                        <span class="icon">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </span>
+                                </span>
+                            </label>
+                            <span class="wide"></span>
+                            <button type="button" class="button nobutton js-export-snippet smaller" data-id="{$snippet.id}"
+                                    title="Скачать"><i class="fas fa-file-download"></i> Скачать</button>
+                        </div>
+                    </div>
+                {/foreach}
+
+                {if !$folders && !$snippets}
+                    <div class="box hint">Пусто. Создайте папку или сниппет.</div>
+                {/if}
+
+            </div>
+        </div>
+
+        <div id="bulk-panel" class="box" style="display:none">
+            <div class="flexbox middle space-8">
+                <span>Выбрано: <strong id="selected-count">0</strong></span>
+                <button id="btn-bulk-share" class="button green small">&#127760; Поделиться</button>
+                <button id="btn-bulk-delete" class="button red small">&#128465; Удалить</button>
+            </div>
+        </div>
     </div>
 </div>
-
-<div id="bulk-panel" class="block" style="display:none">
-    <div class="flexbox middle space-8">
-        <span>Выбрано: <strong id="selected-count">0</strong></span>
-        <button id="btn-bulk-share" class="button green small">&#127760; Поделиться</button>
-        <button id="btn-bulk-delete" class="button red small">&#128465; Удалить</button>
-    </div>
-</div>
-
 <script>
-$(() => {
-    new SandboxCatalog({
-        l10n: {
-            dialog_header:   {_w('Создать папку')|json_encode:256},
-            name_label:      {_w('Название')|json_encode:256},
-            desc_label:      {_w('Описание')|json_encode:256},
-            shared_label:    {_w('Общий доступ')|json_encode:256},
-            create_btn:      {_w('Создать')|json_encode:256},
-            cancel:          {_w('Отмена')|json_encode:256},
-            name_required:   {_w('Укажите название')|json_encode:256},
-            select_snippets: {_w('Выберите сниппеты')|json_encode:256},
-            confirm_delete:  {_w('Удалить выбранные элементы?')|json_encode:256},
-        },
-    }).init();
-});
+    $(() => {
+        new SandboxCatalog({
+            l10n: {
+                dialog_header:   {_w('Создать папку')|json_encode:256},
+                name_label:      {_w('Название')|json_encode:256},
+                desc_label:      {_w('Описание')|json_encode:256},
+                shared_label:    {_w('Общий доступ')|json_encode:256},
+                create_btn:      {_w('Создать')|json_encode:256},
+                cancel:          {_w('Отмена')|json_encode:256},
+                name_required:   {_w('Укажите название')|json_encode:256},
+                select_snippets: {_w('Выберите сниппеты')|json_encode:256},
+                confirm_delete:  {_w('Удалить выбранные элементы?')|json_encode:256},
+            },
+        }).init();
+    });
 </script>
