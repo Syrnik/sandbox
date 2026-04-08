@@ -24,12 +24,15 @@ class sandboxBackendCatalogAction extends waViewAction
         wa()->getResponse()->addCss('css/sandbox.css', 'sandbox');
         wa()->getResponse()->addJs('js/sandbox-catalog.js', 'sandbox');
 
+        $allFolders = $folderModel->getAccessible($contactId);
+
         $this->view->assign([
             'folders'     => $folders,
             'snippets'    => $snippets,
             'breadcrumbs' => $breadcrumbs,
             'parent_id'   => $parentId,
             'contact_id'  => $contactId,
+            'all_folders' => $allFolders,
         ]);
     }
 

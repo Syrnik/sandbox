@@ -62,6 +62,63 @@ class sandboxBackendActions extends waJsonActions
         }
     }
 
+    public function snippetMoveAction(): void
+    {
+        $ids = waRequest::post('ids', [], 'array_int');
+        $folderId = waRequest::post('folder_id', 0, 'int');
+        if ($folderId === 0) {
+            $folderId = null;
+        }
+
+        $model = new sandboxSnippetModel();
+        foreach ($ids as $id) {
+            $snippet = $model->getById($id);
+            $this->checkOwnership($snippet);
+            $model->edit($id, ['folder_id' => $folderId]);
+        }
+        $this->response = true;
+    }
+
+    public function snippetDuplicateAction(): void
+    {
+        $id = waRequest::post('id', 0, 'int');
+        $model = new sandboxSnippetModel();
+        $snippet = $model->getById($id);
+        $this->checkAccess($snippet);
+        $newId = $model->add([
+            'contact_id'  => $this->getUserId(),
+            'name'        => $snippet['name'] . ' (копия)',
+            'description' => $snippet['description'] ?? '',
+            'code_php'    => $snippet['code_php'] ?? '',
+            'code_smarty' => $snippet['code_smarty'] ?? '',
+            'is_shared'   => 0,
+            'folder_id'   => null,
+        ]);
+        $this->response = $model->getById($newId);
+    }
+
+    public function bulkShareAction(): void
+    {
+        $snippetIds = waRequest::post('snippet_ids', [], 'array_int');
+        $folderIds  = waRequest::post('folder_ids', [], 'array_int');
+        $isShared   = waRequest::post('is_shared', 0, 'int');
+
+        $snippetModel = new sandboxSnippetModel();
+        $folderModel  = new sandboxFolderModel();
+
+        foreach ($snippetIds as $id) {
+            $snippet = $snippetModel->getById($id);
+            $this->checkOwnership($snippet);
+            $snippetModel->edit($id, ['is_shared' => $isShared]);
+        }
+
+        foreach ($folderIds as $id) {
+            $this->shareFolderRecursive($folderModel, $snippetModel, $id, $isShared);
+        }
+
+        $this->response = true;
+    }
+
     public function snippetDeleteAction(): void
     {
         $ids = waRequest::post('ids', [], 'array_int');
@@ -101,10 +158,11 @@ class sandboxBackendActions extends waJsonActions
     public function folderSaveAction(): void
     {
         $id = waRequest::post('id', 0, 'int');
+        $parentId = waRequest::post('parent_id', 0, 'int');
         $data = [
             'name'        => waRequest::post('name', '', 'string_trim'),
             'description' => waRequest::post('description', '', 'string_trim'),
-            'parent_id'   => waRequest::post('parent_id', null, 'int'),
+            'parent_id'   => $parentId ?: null,
             'is_shared'   => waRequest::post('is_shared', 0, 'int'),
         ];
 
@@ -278,6 +336,30 @@ class sandboxBackendActions extends waJsonActions
         }
         if (!$record['is_shared'] && (int)$record['contact_id'] !== $this->getUserId()) {
             throw new waRightsException();
+        }
+    }
+
+    private function shareFolderRecursive(
+        sandboxFolderModel $folderModel,
+        sandboxSnippetModel $snippetModel,
+        int $folderId,
+        int $isShared
+    ): void {
+        $folder = $folderModel->getById($folderId);
+        $this->checkOwnership($folder);
+        $folderModel->updateByField('id', $folderId, [
+            'is_shared'       => $isShared,
+            'update_datetime' => date('Y-m-d H:i:s'),
+        ]);
+
+        $snippets = $snippetModel->getByField('folder_id', $folderId, true);
+        foreach ($snippets as $s) {
+            $snippetModel->edit((int)$s['id'], ['is_shared' => $isShared]);
+        }
+
+        $children = $folderModel->getByField('parent_id', $folderId, true);
+        foreach ($children as $child) {
+            $this->shareFolderRecursive($folderModel, $snippetModel, (int)$child['id'], $isShared);
         }
     }
 

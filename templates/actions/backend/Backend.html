@@ -73,6 +73,7 @@
                 <div class="box sandbox-editor-footer">
                     <button type="button" id="btn-execute" class="button green"><i class="fas fa-play"></i> {_w('Выполнить')|escape}</button>
                     <button type="button" id="btn-save" class="button blue"><i class="fas fa-save"></i> {_w('Сохранить')|escape}</button>
+                    <button type="button" id="btn-duplicate" class="button light-gray" style="display:none"><i class="fas fa-copy"></i> {_w('Дублировать')|escape}</button>
                     <button type="button" id="btn-new" class="button light-gray">{_w('Новый')|escape}</button>
                 </div>
             </div>
@@ -96,6 +97,7 @@
 <script>
 $(() => {
     new SandboxEditor({
+        folders: {$folders|json_encode},
         l10n: {
             execute_label:     {_w('Выполнить')|json_encode:256},
             copied:            {_w('Скопировано!')|json_encode:256},
@@ -103,6 +105,8 @@ $(() => {
             dialog_header:     {_w('Сохранить сниппет')|json_encode:256},
             name_label:        {_w('Название')|json_encode:256},
             desc_label:        {_w('Описание')|json_encode:256},
+            folder_label:      {_w('Папка')|json_encode:256},
+            no_folder:         {_w('— Без папки —')|json_encode:256},
             shared_label:      {_w('Доступ для всех')|json_encode:256},
             save_as_new_label: {_w('Сохранить как новый')|json_encode:256},
             save_btn:          {_w('Сохранить')|json_encode:256},

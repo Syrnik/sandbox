@@ -6,12 +6,14 @@ class sandboxSnippetModel extends waModel
 
     public function getAccessible(int $contactId, ?int $folderId = null): array
     {
-        $where = 'is_shared = 1 OR contact_id = :cid';
+        $where = '(is_shared = 1 OR contact_id = :cid)';
         $params = ['cid' => $contactId];
 
         if ($folderId !== null) {
             $where .= ' AND folder_id = :fid';
             $params['fid'] = $folderId;
+        } else {
+            $where .= ' AND folder_id IS NULL';
         }
 
         return $this->select('*')

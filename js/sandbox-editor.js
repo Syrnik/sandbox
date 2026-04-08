@@ -13,6 +13,8 @@
                 dialog_header:      'Сохранить сниппет',
                 name_label:         'Название',
                 desc_label:         'Описание',
+                folder_label:       'Папка',
+                no_folder:          '— Без папки —',
                 shared_label:       'Доступ для всех',
                 save_as_new_label:  'Сохранить как новый',
                 save_btn:           'Сохранить',
@@ -21,9 +23,11 @@
                 access_shared:      'Общий доступ',
                 access_personal:    'Личный',
             }, options.l10n || {});
+            this.folders = options.folders || [];
         }
 
         currentSnippetId = null;
+        currentFolderId  = null;
         currentSnippetName = "";
         currentSnippetDesc = "";
         phpEditor = null;
@@ -67,6 +71,8 @@
             $("#btn-execute").on("click", () => this.execute());
             $("#btn-save").on("click", () => this.save());
             $("#btn-new").on("click", () => this.newSnippet());
+            $("#btn-duplicate").on("click", () => this.duplicate());
+
             $("#btn-copy-result").on("click", () => {
                 const text = $("#result-output").text();
                 navigator.clipboard.writeText(text).then(() => {
@@ -109,6 +115,7 @@
                     snippet_name:   this.currentSnippetName,
                     snippet_desc:   this.currentSnippetDesc,
                     is_shared:      this.isShared,
+                    folder_id:      this.currentFolderId,
                     timestamp:      Date.now(),
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -139,6 +146,7 @@
                 if (state.snippet_id) {
                     this.currentSnippetId = state.snippet_id;
                 }
+                this.currentFolderId = state.folder_id ?? null;
                 this.#updateMeta(state.snippet_name || "", state.snippet_desc || "", state.is_shared || 0);
             } catch {
                 // Повреждённые данные — молча игнорируем
@@ -186,6 +194,13 @@
         save() {
             const hasId = !!this.currentSnippetId;
 
+            const folderOptions = this.#buildFolderOptions(this.folders);
+            let folderOptionsHtml = `<option value="">${this.#escHtml(this.l10n.no_folder)}</option>`;
+            folderOptions.forEach(f => {
+                const prefix = '— '.repeat(f.depth);
+                folderOptionsHtml += `<option value="${f.id}">${prefix}${this.#escHtml(f.name)}</option>`;
+            });
+
             const content = `
                 <div class="fields vertical">
                     <div class="field">
@@ -198,6 +213,14 @@
                         <div class="name">${this.l10n.desc_label}</div>
                         <div class="value">
                             <textarea id="save-dialog-desc" class="full-width" rows="3" style="resize:vertical"></textarea>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name">${this.l10n.folder_label}</div>
+                        <div class="value">
+                            <div class="wa-select">
+                                <select id="save-dialog-folder">${folderOptionsHtml}</select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -230,6 +253,7 @@
                 onOpen: ($wrapper) => {
                     $wrapper.find("#save-dialog-name").val(this.currentSnippetName);
                     $wrapper.find("#save-dialog-desc").val(this.currentSnippetDesc);
+                    $wrapper.find("#save-dialog-folder").val(this.currentFolderId || "");
                     $wrapper.find("#save-dialog-shared").prop("checked", !!this.isShared);
                     $wrapper.find("#save-dialog-shared-switch").waSwitch();
                     if (hasId) {
@@ -244,9 +268,10 @@
                             return;
                         }
 
-                        const saveAsNew = hasId && $wrapper.find("#save-dialog-as-new").is(":checked");
-                        const newDesc = $wrapper.find("#save-dialog-desc").val();
-                        const newShared = $wrapper.find("#save-dialog-shared").is(":checked") ? 1 : 0;
+                        const saveAsNew  = hasId && $wrapper.find("#save-dialog-as-new").is(":checked");
+                        const newDesc    = $wrapper.find("#save-dialog-desc").val();
+                        const newShared  = $wrapper.find("#save-dialog-shared").is(":checked") ? 1 : 0;
+                        const newFolder  = $wrapper.find("#save-dialog-folder").val() || 0;
 
                         const data = {
                             name:        newName,
@@ -254,6 +279,7 @@
                             code_php:    this.phpEditor.getValue(),
                             code_smarty: this.smartyEditor.getValue(),
                             is_shared:   newShared,
+                            folder_id:   newFolder,
                         };
                         if (!saveAsNew && this.currentSnippetId) {
                             data.id = this.currentSnippetId;
@@ -266,7 +292,8 @@
                             dataType: "json",
                             success: ({ status, data: snippet }) => {
                                 if (status !== "ok") return;
-                                this.currentSnippetId = snippet.id;
+                                this.currentSnippetId = parseInt(snippet.id);
+                                this.currentFolderId  = snippet.folder_id ? parseInt(snippet.folder_id) : null;
                                 this.#updateMeta(newName, newDesc, newShared);
                                 this.saveToLocalStorage();
                                 $wrapper.trigger("dialog-close");
@@ -287,8 +314,12 @@
                     if (status !== "ok") return;
                     this.phpEditor.setValue(s.code_php ?? "", -1);
                     this.smartyEditor.setValue(s.code_smarty ?? "", -1);
-                    this.currentSnippetId = s.id;
+                    this.currentSnippetId = parseInt(s.id);
+                    this.currentFolderId  = s.folder_id ? parseInt(s.folder_id) : null;
                     this.#updateMeta(s.name, s.description ?? "", s.is_shared);
+                    if (s.code_smarty) {
+                        $("#smarty-toggle").prop("checked", true).trigger("change");
+                    }
                     this.saveToLocalStorage();
                 },
             });
@@ -296,12 +327,31 @@
 
         newSnippet() {
             this.currentSnippetId = null;
+            this.currentFolderId  = null;
             this.phpEditor.setValue("", -1);
             this.smartyEditor.setValue("", -1);
             this.#updateMeta("", "", 0);
             $("#result-output").html("");
             $("#result-errors").hide().html("");
             this.clearLocalStorage();
+        }
+
+        duplicate() {
+            if (!this.currentSnippetId) return;
+            $.ajax({
+                url: "?module=backend&action=snippetDuplicate",
+                type: "POST",
+                data: { id: this.currentSnippetId },
+                dataType: "json",
+                success: ({ status, data: s }) => {
+                    if (status !== "ok") return;
+                    this.currentSnippetId = parseInt(s.id);
+                    this.currentFolderId  = s.folder_id ? parseInt(s.folder_id) : null;
+                    this.#updateMeta(s.name, s.description ?? "", s.is_shared);
+                    this.saveToLocalStorage();
+                    if ($.wa && $.wa.notice) $.wa.notice("Сниппет продублирован");
+                },
+            });
         }
 
         #updateMeta(name, desc, isShared) {
@@ -311,12 +361,46 @@
             $("#snippet-name-display").text(name);
             $("#snippet-desc-display").text(desc || "");
             this.#updateAccessIcon();
+            this.#updateDuplicateBtn();
         }
 
         #updateAccessIcon() {
             const $icon = $("#access-icon");
             $icon.html(this.isShared ? '<i class="fas fa-globe text-blue"></i>' : '<i class="fas fa-lock text-yellow"></i>');
             $icon.attr("title", this.isShared ? this.l10n.access_shared : this.l10n.access_personal);
+        }
+
+        #updateDuplicateBtn() {
+            if (this.currentSnippetId) {
+                $("#btn-duplicate").show();
+            } else {
+                $("#btn-duplicate").hide();
+            }
+        }
+
+        #buildFolderOptions(folders) {
+            const result = [];
+            const traverse = (parentId, depth) => {
+                folders
+                    .filter(f => {
+                        const fp = (f.parent_id == null || f.parent_id === '') ? null : parseInt(f.parent_id);
+                        return fp === parentId;
+                    })
+                    .forEach(f => {
+                        result.push({ id: parseInt(f.id), name: f.name, depth });
+                        traverse(parseInt(f.id), depth + 1);
+                    });
+            };
+            traverse(null, 0);
+            return result;
+        }
+
+        #escHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
         }
 
         #watchWaTheme() {

@@ -4,11 +4,10 @@
             <div class="flexbox middle space-8">
                 <h1 class="wide">Каталог сниппетов</h1>
                 <a href="?module=backend" class="button light-gray">&#8592; Редактор</a>
-                <button id="btn-create-folder" class="button green">&#128193; Создать папку</button>
-                <a href="?module=backend{if $parent_id}&folder_id={$parent_id}{/if}" class="button blue">&#43; Создать
-                    сниппет</a>
+                <button id="btn-create-folder" class="button green"><i class="fas fa-folder-plus"></i> Создать папку</button>
+                <a href="?module=backend{if $parent_id}&folder_id={$parent_id}{/if}" class="button blue"><i class="fas fa-plus"></i> Создать сниппет</a>
                 <label class="button light-gray">
-                    &#8679; Импорт
+                    <i class="fas fa-file-upload"></i> Загрузить
                     <input type="file" id="import-file" accept=".json" class="hidden">
                 </label>
             </div>
@@ -17,7 +16,7 @@
         {if $breadcrumbs}
             <div class="box">
                 <ul class="breadcrumbs inline-list">
-                    <li><a href="?module=backend&action=catalog">Корень</a></li>
+                    <li><a href="?module=backend&action=catalog"><i class="fas fa-home"></i></a></li>
                     {foreach $breadcrumbs as $crumb}
                         <li><a href="?module=backend&action=catalog&folder_id={$crumb.id}">{$crumb.name|escape}</a></li>
                     {/foreach}
@@ -31,17 +30,10 @@
                 {foreach $folders as $folder}
                     <div class="box shadowed sandbox-card" data-id="{$folder.id}" data-type="folder">
                         <div>
-                            <div class="flexbox middle space-4">
-                                <span class="icon size-24">&#128193;</span>
+                            <div class="flexbox space-4 sandbox-card-title">
+                                <i class="fas fa-folder large text-yellow"></i>
                                 <span class="wide bold">{$folder.name|escape}</span>
-                                <span class="hint">{if $folder.is_shared}
-
-                                        <i class="fas fa-globe text-blue"></i>
-
-{else}
-
-                                        <i class="fas fa-lock text-yellow"></i>
-                                    {/if}</span>
+                                <span class="hint">{if $folder.is_shared}<i class="fas fa-globe text-blue"></i>{else}<i class="fas fa-lock text-yellow"></i>{/if}</span>
                             </div>
                             {if $folder.description}
                                 <div class="hint small box">{$folder.description|escape|truncate:80}</div>
@@ -51,17 +43,20 @@
                             <label class="inline-block" onclick="event.stopPropagation()">
                                 <span class="wa-checkbox">
                                     <input type="checkbox" class="js-select-item" data-id="{$folder.id}" data-type="folder">
-                                    <span>
-                                        <span class="icon">
-                                            <i class="fas fa-check"></i>
-                                        </span>
-                                    </span>
+                                    <span><span class="icon"><i class="fas fa-check"></i></span></span>
                                 </span>
                             </label>
                             <span class="wide"></span>
-                            <a href="?module=backend&action=catalog&folder_id={$folder.id}" class="small">Открыть</a>
-                            <button type="button" class="button nobutton js-export-folder smaller" data-id="{$folder.id}"
-                                    title="Скачать"><i class="fas fa-file-download"></i> Скачать</button>
+                            <button type="button"
+                                    class="button nobutton js-kebab smaller"
+                                    data-id="{$folder.id}"
+                                    data-type="folder"
+                                    data-name="{$folder.name|escape}"
+                                    data-description="{$folder.description|escape}"
+                                    data-shared="{$folder.is_shared}"
+                                    data-owner="{if $folder.contact_id == $contact_id}1{else}0{/if}"
+                                    data-parent-id="{$folder.parent_id|intval}"
+                                    title="Действия"><i class="fas fa-ellipsis-v"></i></button>
                         </div>
                     </div>
                 {/foreach}
@@ -69,17 +64,10 @@
                 {foreach $snippets as $snippet}
                     <div class="box shadowed sandbox-card" data-id="{$snippet.id}" data-type="snippet">
                         <div>
-                            <div class="flexbox middle space-4">
-                                <span><i class="fab fa-php"></i></span>
+                            <div class="flexbox space-4 sandbox-card-title">
+                                <i class="fab fa-php large text-blue"></i>
                                 <span class="wide bold">{$snippet.name|escape}</span>
-                                <span class="hint">{if $snippet.is_shared}
-
-                                        <i class="fas fa-globe text-blue"></i>
-
-{else}
-
-                                        <i class="fas fa-lock text-yellow"></i>
-                                    {/if}</span>
+                                <span class="hint">{if $snippet.is_shared}<i class="fas fa-globe text-blue"></i>{else}<i class="fas fa-lock text-yellow"></i>{/if}</span>
                             </div>
                             {if $snippet.description}
                                 <div class="hint small">{$snippet.description|escape|truncate:80}</div>
@@ -88,18 +76,20 @@
                         <div class="small flexbox middle">
                             <label class="inline-block" onclick="event.stopPropagation()">
                                 <span class="wa-checkbox">
-                                    <input type="checkbox" class="js-select-item" data-id="{$snippet.id}"
-                                           data-type="snippet">
-                                    <span>
-                                        <span class="icon">
-                                            <i class="fas fa-check"></i>
-                                        </span>
-                                    </span>
+                                    <input type="checkbox" class="js-select-item" data-id="{$snippet.id}" data-type="snippet">
+                                    <span><span class="icon"><i class="fas fa-check"></i></span></span>
                                 </span>
                             </label>
                             <span class="wide"></span>
-                            <button type="button" class="button nobutton js-export-snippet smaller" data-id="{$snippet.id}"
-                                    title="Скачать"><i class="fas fa-file-download"></i> Скачать</button>
+                            <button type="button"
+                                    class="button nobutton js-kebab smaller"
+                                    data-id="{$snippet.id}"
+                                    data-type="snippet"
+                                    data-name="{$snippet.name|escape}"
+                                    data-description="{$snippet.description|escape}"
+                                    data-shared="{$snippet.is_shared}"
+                                    data-owner="{if $snippet.contact_id == $contact_id}1{else}0{/if}"
+                                    title="Действия"><i class="fas fa-ellipsis-v"></i></button>
                         </div>
                     </div>
                 {/foreach}
@@ -115,6 +105,8 @@
             <div class="flexbox middle space-8">
                 <span>Выбрано: <strong id="selected-count">0</strong></span>
                 <button id="btn-bulk-share" class="button green small">&#127760; Поделиться</button>
+                <button id="btn-bulk-unshare" class="button light-gray small">&#128274; Сделать личным</button>
+                <button id="btn-bulk-move" class="button blue small">&#128194; Переместить</button>
                 <button id="btn-bulk-delete" class="button red small">&#128465; Удалить</button>
             </div>
         </div>
@@ -123,16 +115,33 @@
 <script>
     $(() => {
         new SandboxCatalog({
+            folders: {$all_folders|json_encode},
             l10n: {
-                dialog_header:   {_w('Создать папку')|json_encode:256},
-                name_label:      {_w('Название')|json_encode:256},
-                desc_label:      {_w('Описание')|json_encode:256},
-                shared_label:    {_w('Общий доступ')|json_encode:256},
-                create_btn:      {_w('Создать')|json_encode:256},
-                cancel:          {_w('Отмена')|json_encode:256},
-                name_required:   {_w('Укажите название')|json_encode:256},
-                select_snippets: {_w('Выберите сниппеты')|json_encode:256},
-                confirm_delete:  {_w('Удалить выбранные элементы?')|json_encode:256},
+                dialog_header:       {_w('Создать папку')|json_encode:256},
+                edit_folder_header:  {_w('Редактировать папку')|json_encode:256},
+                name_label:          {_w('Название')|json_encode:256},
+                desc_label:          {_w('Описание')|json_encode:256},
+                shared_label:        {_w('Общий доступ')|json_encode:256},
+                parent_folder_label: {_w('Родительская папка')|json_encode:256},
+                no_parent:           {_w('— Корень —')|json_encode:256},
+                create_btn:          {_w('Создать')|json_encode:256},
+                save_btn:            {_w('Сохранить')|json_encode:256},
+                cancel:              {_w('Отмена')|json_encode:256},
+                name_required:       {_w('Укажите название')|json_encode:256},
+                select_snippets:     {_w('Выберите сниппеты')|json_encode:256},
+                confirm_delete:      {_w('Удалить выбранные элементы?')|json_encode:256},
+                move_btn:            {_w('Переместить')|json_encode:256},
+                move_header:         {_w('Переместить в папку')|json_encode:256},
+                move_confirm:        {_w('Переместить')|json_encode:256},
+                duplicate_snippet:   {_w('Дублировать')|json_encode:256},
+                copy_to_me:          {_w('Копировать к себе')|json_encode:256},
+                make_private:        {_w('Сделать личным')|json_encode:256},
+                share_btn:           {_w('Поделиться')|json_encode:256},
+                open_snippet:        {_w('Открыть в редакторе')|json_encode:256},
+                open_folder:         {_w('Открыть')|json_encode:256},
+                edit_folder:         {_w('Редактировать')|json_encode:256},
+                export_btn:          {_w('Скачать JSON')|json_encode:256},
+                delete_btn:          {_w('Удалить')|json_encode:256},
             },
         }).init();
     });
