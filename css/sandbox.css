@@ -115,8 +115,8 @@
 .sandbox-kebab-menu {
     position: fixed;
     z-index: 9999;
-    background: var(--background-color, #fff);
-    border: 1px solid var(--border-color, #e0e0e0);
+    background: var(--background-color-blank);
+    border: 1px solid var(--border-color-soft);
     border-radius: 4px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     min-width: 180px;
@@ -131,7 +131,7 @@
 }
 
 .sandbox-kebab-item:hover {
-    background: var(--hover-color, #f5f5f5);
+    background: var(--menu-background-color-hover);
 }
 
 .sandbox-kebab-item.danger {
@@ -139,7 +139,7 @@
 }
 
 .sandbox-kebab-separator {
-    border-top: 1px solid var(--border-color, #e0e0e0);
+    border-top: 1px solid var(--border-color-soft);
     margin: 4px 0;
 }
 
