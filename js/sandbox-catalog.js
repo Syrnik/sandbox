@@ -371,24 +371,21 @@
         }
 
         deleteFolder(id) {
-            $.waDialog({
-                header:  this.l10n.confirm_delete_folder_header,
-                content: `<p>${this.#escHtml(this.l10n.confirm_delete_folder_text)}</p>`,
-                footer:  `<button class="button red js-confirm-delete-folder">${this.#escHtml(this.l10n.delete_btn)}</button>
-                          <button class="button light-gray js-cancel">${this.#escHtml(this.l10n.cancel)}</button>`,
-                onOpen: ($dialog) => {
-                    $dialog.on("click", ".js-cancel", () => $dialog.trigger("dialog-close"));
-                    $dialog.on("click", ".js-confirm-delete-folder", () => {
-                        $dialog.trigger("dialog-close");
-                        $.ajax({
-                            url: "?module=backend&action=folderDelete",
-                            type: "POST",
-                            data: { id },
-                            dataType: "json",
-                            success: ({ status }) => {
-                                if (status === "ok") location.reload();
-                            },
-                        });
+            $.wa.confirm({
+                title:                this.l10n.confirm_delete_folder_header,
+                text:                 `<p>${this.#escHtml(this.l10n.confirm_delete_folder_text)}</p>`,
+                success_button_title: this.l10n.delete_btn,
+                success_button_class: 'red',
+                cancel_button_title:  this.l10n.cancel,
+                onSuccess: () => {
+                    $.ajax({
+                        url: "?module=backend&action=folderDelete",
+                        type: "POST",
+                        data: { id },
+                        dataType: "json",
+                        success: ({ status }) => {
+                            if (status === "ok") location.reload();
+                        },
                     });
                 },
             });
