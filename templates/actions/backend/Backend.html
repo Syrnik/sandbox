@@ -70,11 +70,13 @@
                     <div class="sandbox-editor-container" id="smarty-editor"></div>
                 </div>
 
-                <div class="box sandbox-editor-footer">
+                <div class="box sandbox-editor-footer flexbox middle">
                     <button type="button" id="btn-execute" class="button green"><i class="fas fa-play"></i> {_w('Выполнить')|escape}</button>
                     <button type="button" id="btn-save" class="button blue"><i class="fas fa-save"></i> {_w('Сохранить')|escape}</button>
                     <button type="button" id="btn-duplicate" class="button light-gray" style="display:none"><i class="fas fa-copy"></i> {_w('Дублировать')|escape}</button>
                     <button type="button" id="btn-new" class="button light-gray">{_w('Новый')|escape}</button>
+                    <span class="wide"></span>
+                    {$wa->getCheatSheetButton(['name' => 'sandbox_smarty', 'app' => 'sandbox', 'key' => 'sandbox_smarty'])}
                 </div>
             </div>
 
@@ -96,7 +98,7 @@
 <script>ace.config.set('basePath', '{$wa_app_static_url}js/vendor/ace/');</script>
 <script>
 $(() => {
-    new SandboxEditor({
+    const sandboxEditor = new SandboxEditor({
         folders: {$folders|json_encode},
         l10n: {
             execute_label:     {_w('Выполнить')|json_encode:256},
@@ -115,6 +117,17 @@ $(() => {
             access_shared:     {_w('Общий доступ')|json_encode:256},
             access_personal:   {_w('Личный')|json_encode:256},
         },
-    }).init();
+    });
+    sandboxEditor.init();
+
+    if ($.cheatsheet && $.cheatsheet.sandbox_smarty) {
+        $.cheatsheet.sandbox_smarty.insertVarEvent = function ($drawer) {
+            $drawer.on('click', '.js-var', function (e) {
+                e.preventDefault();
+                sandboxEditor.smartyEditor.insert($(this).text());
+                sandboxEditor.smartyEditor.focus();
+            });
+        };
+    }
 });
 </script>
