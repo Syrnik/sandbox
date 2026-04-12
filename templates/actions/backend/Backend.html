@@ -66,17 +66,18 @@
                 </div>
 
                 <div id="smarty-editor-wrapper" class="sandbox-editor-box box shadowed" style="display:none">
-                    <div class="box small"><strong>Smarty</strong></div>
+                    <div class="box small flexbox middle">
+                        <strong class="wide">Smarty</strong>
+                        {$wa->getCheatSheetButton(['name' => 'sandbox_smarty', 'app' => 'sandbox', 'key' => 'sandbox_smarty'])}
+                    </div>
                     <div class="sandbox-editor-container" id="smarty-editor"></div>
                 </div>
 
-                <div class="box sandbox-editor-footer flexbox middle">
+                <div class="box sandbox-editor-footer">
                     <button type="button" id="btn-execute" class="button green"><i class="fas fa-play"></i> {_w('Выполнить')|escape}</button>
                     <button type="button" id="btn-save" class="button blue"><i class="fas fa-save"></i> {_w('Сохранить')|escape}</button>
                     <button type="button" id="btn-duplicate" class="button light-gray" style="display:none"><i class="fas fa-copy"></i> {_w('Дублировать')|escape}</button>
                     <button type="button" id="btn-new" class="button light-gray">{_w('Новый')|escape}</button>
-                    <span class="wide"></span>
-                    {$wa->getCheatSheetButton(['name' => 'sandbox_smarty', 'app' => 'sandbox', 'key' => 'sandbox_smarty'])}
                 </div>
             </div>
 
@@ -119,6 +120,9 @@ $(() => {
         },
     });
     sandboxEditor.init();
+
+    // Скрыть кнопку «Переменные» — нужна только «Шпаргалка»
+    $('#smarty-editor-wrapper .js-show-variables').hide();
 
     if ($.cheatsheet && $.cheatsheet.sandbox_smarty) {
         $.cheatsheet.sandbox_smarty.insertVarEvent = function ($drawer) {
