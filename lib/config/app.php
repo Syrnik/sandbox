@@ -2,7 +2,7 @@
 return [
     'name'    => 'Sandbox',
     'icon'    => 'img/sandbox.svg',
-    'version' => '0.1.0',
+    'version' => '1.0.0',
     'vendor'  => '670917',
     'csrf'    => true,
     'ui'      => '2.0',

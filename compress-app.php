@@ -41,9 +41,6 @@ class AppCompressor
 
     public function __construct(array $argv)
     {
-        if (!extension_loaded('phar')) {
-            throw new RuntimeException('PHP extension "phar" is required');
-        }
         $this->parseArgs($argv);
     }
 
@@ -888,40 +885,21 @@ class AppCompressor
         $md5Path = $this->appPath . '/.files.md5';
         $this->md5Files($this->files, $md5Path);
 
-        // Build .tar (PharData works with uncompressed tar first)
-        $tarPath = $this->appPath . '/' . $this->appId . '.tar';
-        if (file_exists($tarPath)) {
-            if (!unlink($tarPath)) {
-                throw new RuntimeException("Cannot remove existing tar file: {$tarPath}");
-            }
-        }
-
         $time = microtime(true);
-        $tar  = new PharData($tarPath);
 
-        $tar->addFile($md5Path, $this->appId . '/.files.md5');
+        // Archive_Tar uses GNU LongLink for paths >99 chars — compatible with all tar parsers.
+        $archiveFiles = [[$this->appId . '/.files.md5', $md5Path]];
         foreach ($this->files as $file) {
-            $tar->addFile($this->appPath . '/' . $file, $this->appId . '/' . $file);
+            $archiveFiles[] = [$this->appId . '/' . $file, $this->appPath . '/' . $file];
         }
-
-        // PharData::compress() creates {name}.tar.gz alongside {name}.tar
-        $tar->compress(Phar::GZ);
+        $tar = new Archive_Tar($archivePath, 'gz');
+        if (!$tar->create($archiveFiles)) {
+            throw new RuntimeException("Archive_Tar failed to create: {$archivePath}");
+        }
         unset($tar);
 
-        // Clean up temp files
-        foreach ([$tarPath, $md5Path] as $tmp) {
-            if (file_exists($tmp)) {
-                unlink($tmp);
-            }
-        }
-
-        // PharData names the gz as {name}.tar.gz — rename to final destination if needed
-        $createdGz = $tarPath . '.gz';
-        if ($createdGz !== $archivePath) {
-            if (file_exists($archivePath)) {
-                unlink($archivePath);
-            }
-            rename($createdGz, $archivePath);
+        if (file_exists($md5Path)) {
+            unlink($md5Path);
         }
 
         $size = filesize($archivePath);
@@ -1029,6 +1007,669 @@ Examples:
   php compress-app.php apicollection -skip all
 
 HELP;
+    }
+}
+
+// =============================================================================
+// Minimal PEAR stub — only what Archive_Tar needs
+// =============================================================================
+if (!class_exists('PEAR')) {
+    class PEAR
+    {
+        public function __construct() {}
+        public function __destruct() {}
+        public static function loadExtension($ext)
+        {
+            if (!extension_loaded($ext) && function_exists('dl')) {
+                @dl($ext . '.' . PHP_SHLIB_SUFFIX);
+            }
+        }
+        public function raiseError($msg)
+        {
+            throw new RuntimeException($msg);
+        }
+    }
+}
+
+// =============================================================================
+// Archive_Tar (PEAR) — embedded, no external dependencies
+// Copyright (c) 1997-2008 Vincent Blavet <vincent@phpconcept.net>
+// License: New BSD License
+// =============================================================================
+if (!function_exists('gzclose') && function_exists('gzclose64')) {
+    function gzclose() { return call_user_func_array('gzclose64', func_get_args()); }
+}
+if (!function_exists('gzeof') && function_exists('gzeof64')) {
+    function gzeof() { return call_user_func_array('gzeof64', func_get_args()); }
+}
+if (!function_exists('gzread') && function_exists('gzread64')) {
+    function gzread() { return call_user_func_array('gzread64', func_get_args()); }
+}
+if (!function_exists('gzopen') && function_exists('gzopen64')) {
+    function gzopen() { return call_user_func_array('gzopen64', func_get_args()); }
+}
+if (!function_exists('gzseek') && function_exists('gzseek64')) {
+    function gzseek() { return call_user_func_array('gzseek64', func_get_args()); }
+}
+if (!function_exists('gztell') && function_exists('gztell64')) {
+    function gztell() { return call_user_func_array('gztell64', func_get_args()); }
+}
+if (!function_exists('gzwrite') && function_exists('gzwrite64')) {
+    function gzwrite() { return call_user_func_array('gzwrite64', func_get_args()); }
+}
+if (!function_exists('gzputs') && function_exists('gzputs64')) {
+    function gzputs() { return call_user_func_array('gzputs64', func_get_args()); }
+}
+
+if (!defined('ARCHIVE_TAR_ATT_SEPARATOR')) {
+    define('ARCHIVE_TAR_ATT_SEPARATOR', 90001);
+    define('ARCHIVE_TAR_END_BLOCK', pack("a512", ''));
+}
+
+class Archive_Tar extends PEAR
+{
+    var $_tarname='';
+    var $_compress=false;
+    var $_compress_type='none';
+    var $_separator=' ';
+    var $_file=0;
+    var $_temp_tarname='';
+    var $_ignore_regexp='';
+
+    function __construct($p_tarname, $p_compress = null)
+    {
+        parent::__construct();
+        $this->_compress = false;
+        $this->_compress_type = 'none';
+        if (($p_compress === null) || ($p_compress == '')) {
+            if (@file_exists($p_tarname)) {
+                if ($fp = @fopen($p_tarname, "rb")) {
+                    $data = fread($fp, 2);
+                    fclose($fp);
+                    if ($data == "\37\213") {
+                        $this->_compress = true;
+                        $this->_compress_type = 'gz';
+                    } elseif ($data == "BZ") {
+                        $this->_compress = true;
+                        $this->_compress_type = 'bz2';
+                    }
+                }
+            } else {
+                if (substr($p_tarname, -2) == 'gz') {
+                    $this->_compress = true;
+                    $this->_compress_type = 'gz';
+                } elseif ((substr($p_tarname, -3) == 'bz2') || (substr($p_tarname, -2) == 'bz')) {
+                    $this->_compress = true;
+                    $this->_compress_type = 'bz2';
+                }
+            }
+        } else {
+            if (($p_compress === true) || ($p_compress == 'gz')) {
+                $this->_compress = true;
+                $this->_compress_type = 'gz';
+            } else if ($p_compress == 'bz2') {
+                $this->_compress = true;
+                $this->_compress_type = 'bz2';
+            } else {
+                $this->_error("Unsupported compression type '$p_compress'\n");
+                return false;
+            }
+        }
+        $this->_tarname = $p_tarname;
+        if ($this->_compress) {
+            $extname = ($this->_compress_type == 'gz') ? 'zlib' : 'bz2';
+            if (!extension_loaded($extname)) {
+                PEAR::loadExtension($extname);
+            }
+            if (!extension_loaded($extname)) {
+                $this->_error("Extension '$extname' not found.");
+                return false;
+            }
+        }
+    }
+
+    function __destruct()
+    {
+        $this->_close();
+        if ($this->_temp_tarname != '')
+            @unlink($this->_temp_tarname);
+        parent::__destruct();
+    }
+
+    function create($p_filelist)
+    {
+        return $this->createModify($p_filelist, '', '');
+    }
+
+    function add($p_filelist)
+    {
+        return $this->addModify($p_filelist, '', '');
+    }
+
+    function createModify($p_filelist, $p_add_dir, $p_remove_dir='')
+    {
+        $v_result = true;
+        if (!$this->_openWrite())
+            return false;
+        if ($p_filelist != '') {
+            if (is_array($p_filelist))
+                $v_list = $p_filelist;
+            elseif (is_string($p_filelist))
+                $v_list = explode($this->_separator, $p_filelist);
+            else {
+                $this->_cleanFile();
+                $this->_error('Invalid file list');
+                return false;
+            }
+            $v_result = $this->_addList($v_list, $p_add_dir, $p_remove_dir);
+        }
+        if ($v_result) {
+            $this->_writeFooter();
+            $this->_close();
+        } else
+            $this->_cleanFile();
+        return $v_result;
+    }
+
+    function addModify($p_filelist, $p_add_dir, $p_remove_dir='')
+    {
+        $v_result = true;
+        if (!$this->_isArchive())
+            $v_result = $this->createModify($p_filelist, $p_add_dir, $p_remove_dir);
+        else {
+            if (is_array($p_filelist))
+                $v_list = $p_filelist;
+            elseif (is_string($p_filelist))
+                $v_list = explode($this->_separator, $p_filelist);
+            else {
+                $this->_error('Invalid file list');
+                return false;
+            }
+            $v_result = $this->_append($v_list, $p_add_dir, $p_remove_dir);
+        }
+        return $v_result;
+    }
+
+    function addString($p_filename, $p_string)
+    {
+        $v_result = true;
+        if (!$this->_isArchive()) {
+            if (!$this->_openWrite()) return false;
+            $this->_close();
+        }
+        if (!$this->_openAppend()) return false;
+        $v_result = $this->_addString($p_filename, $p_string);
+        $this->_writeFooter();
+        $this->_close();
+        return $v_result;
+    }
+
+    function _error($p_message)
+    {
+        $this->raiseError($p_message);
+    }
+
+    function _warning($p_message)
+    {
+        $this->raiseError($p_message);
+    }
+
+    function _isArchive($p_filename=NULL)
+    {
+        if ($p_filename == NULL) $p_filename = $this->_tarname;
+        clearstatcache();
+        return @is_file($p_filename) && !@is_link($p_filename);
+    }
+
+    function _openWrite()
+    {
+        if ($this->_compress_type == 'gz')
+            $this->_file = @gzopen($this->_tarname, "wb9");
+        else if ($this->_compress_type == 'bz2')
+            $this->_file = @bzopen($this->_tarname, "w");
+        else if ($this->_compress_type == 'none')
+            $this->_file = @fopen($this->_tarname, "wb");
+        else
+            $this->_error('Unknown compression type ('.$this->_compress_type.')');
+        if ($this->_file == 0) {
+            $this->_error('Unable to open in write mode \''.$this->_tarname.'\'');
+            return false;
+        }
+        return true;
+    }
+
+    function _openRead()
+    {
+        if (strtolower(substr($this->_tarname, 0, 7)) == 'http://') {
+            if ($this->_temp_tarname == '') {
+                $this->_temp_tarname = uniqid('tar').'.tmp';
+                if (!$v_file_from = @fopen($this->_tarname, 'rb')) {
+                    $this->_error('Unable to open \''.$this->_tarname.'\'');
+                    $this->_temp_tarname = '';
+                    return false;
+                }
+                if (!$v_file_to = @fopen($this->_temp_tarname, 'wb')) {
+                    $this->_error('Unable to open \''.$this->_temp_tarname.'\'');
+                    $this->_temp_tarname = '';
+                    return false;
+                }
+                while ($v_data = @fread($v_file_from, 1024))
+                    @fwrite($v_file_to, $v_data);
+                @fclose($v_file_from);
+                @fclose($v_file_to);
+            }
+            $v_filename = $this->_temp_tarname;
+        } else {
+            $v_filename = $this->_tarname;
+        }
+        if ($this->_compress_type == 'gz')
+            $this->_file = @gzopen($v_filename, "rb");
+        else if ($this->_compress_type == 'bz2')
+            $this->_file = @bzopen($v_filename, "r");
+        else if ($this->_compress_type == 'none')
+            $this->_file = @fopen($v_filename, "rb");
+        else
+            $this->_error('Unknown compression type ('.$this->_compress_type.')');
+        if ($this->_file == 0) {
+            $this->_error('Unable to open in read mode \''.$v_filename.'\'');
+            return false;
+        }
+        return true;
+    }
+
+    function _close()
+    {
+        if (is_resource($this->_file)) {
+            if ($this->_compress_type == 'gz')       @gzclose($this->_file);
+            else if ($this->_compress_type == 'bz2') @bzclose($this->_file);
+            else if ($this->_compress_type == 'none') @fclose($this->_file);
+            $this->_file = 0;
+        }
+        if ($this->_temp_tarname != '') {
+            @unlink($this->_temp_tarname);
+            $this->_temp_tarname = '';
+        }
+        return true;
+    }
+
+    function _cleanFile()
+    {
+        $this->_close();
+        if ($this->_temp_tarname != '') {
+            @unlink($this->_temp_tarname);
+            $this->_temp_tarname = '';
+        } else {
+            @unlink($this->_tarname);
+        }
+        $this->_tarname = '';
+        return true;
+    }
+
+    function _writeBlock($p_binary_data, $p_len=null)
+    {
+        if (is_resource($this->_file)) {
+            if ($p_len === null) {
+                if ($this->_compress_type == 'gz')       @gzputs($this->_file, $p_binary_data);
+                else if ($this->_compress_type == 'bz2') @bzwrite($this->_file, $p_binary_data);
+                else if ($this->_compress_type == 'none') @fputs($this->_file, $p_binary_data);
+            } else {
+                if ($this->_compress_type == 'gz')       @gzputs($this->_file, $p_binary_data, $p_len);
+                else if ($this->_compress_type == 'bz2') @bzwrite($this->_file, $p_binary_data, $p_len);
+                else if ($this->_compress_type == 'none') @fputs($this->_file, $p_binary_data, $p_len);
+            }
+        }
+        return true;
+    }
+
+    function _readBlock()
+    {
+        $v_block = null;
+        if (is_resource($this->_file)) {
+            if ($this->_compress_type == 'gz')       $v_block = @gzread($this->_file, 512);
+            else if ($this->_compress_type == 'bz2') $v_block = @bzread($this->_file, 512);
+            else if ($this->_compress_type == 'none') $v_block = @fread($this->_file, 512);
+        }
+        return $v_block;
+    }
+
+    function _jumpBlock($p_len=null)
+    {
+        if (is_resource($this->_file)) {
+            if ($p_len === null) $p_len = 1;
+            if ($this->_compress_type == 'gz')
+                @gzseek($this->_file, gztell($this->_file)+($p_len*512));
+            else if ($this->_compress_type == 'bz2')
+                for ($i=0; $i<$p_len; $i++) $this->_readBlock();
+            else if ($this->_compress_type == 'none')
+                @fseek($this->_file, $p_len*512, SEEK_CUR);
+        }
+        return true;
+    }
+
+    function _writeFooter()
+    {
+        if (is_resource($this->_file)) {
+            $this->_writeBlock(pack('a1024', ''));
+        }
+        return true;
+    }
+
+    function _addList($p_list, $p_add_dir, $p_remove_dir)
+    {
+        $v_result = true;
+        $v_header = array();
+        $p_add_dir    = $this->_translateWinPath($p_add_dir);
+        $p_remove_dir = $this->_translateWinPath($p_remove_dir, false);
+        if (!$this->_file) {
+            $this->_error('Invalid file descriptor');
+            return false;
+        }
+        if (sizeof($p_list) == 0) return true;
+        foreach ($p_list as $v_filename) {
+            if (!$v_result) break;
+            $p_as_filename = null;
+            if (is_array($v_filename)) {
+                @list($p_as_filename, $v_filename) = $v_filename;
+            }
+            if ($v_filename == $this->_tarname) continue;
+            if ($v_filename == '') continue;
+            if ($this->_ignore_regexp && preg_match($this->_ignore_regexp, '/'.$v_filename)) {
+                $this->_warning("File '$v_filename' ignored");
+                continue;
+            }
+            if (!file_exists($v_filename)) {
+                $this->_warning("File '$v_filename' does not exist");
+                continue;
+            }
+            if (!$this->_addFile($v_filename, $v_header, $p_add_dir, $p_remove_dir, $p_as_filename))
+                return false;
+            if (@is_dir($v_filename) && !@is_link($v_filename)) {
+                if (!($p_hdir = opendir($v_filename))) {
+                    $this->_warning("Directory '$v_filename' can not be read");
+                    continue;
+                }
+                while (false !== ($p_hitem = readdir($p_hdir))) {
+                    if (($p_hitem != '.') && ($p_hitem != '..')) {
+                        $p_temp_list[0] = ($v_filename != ".") ? $v_filename.'/'.$p_hitem : $p_hitem;
+                        $v_result = $this->_addList($p_temp_list, $p_add_dir, $p_remove_dir);
+                    }
+                }
+                unset($p_temp_list, $p_hdir, $p_hitem);
+            }
+        }
+        return $v_result;
+    }
+
+    function _addFile($p_filename, &$p_header, $p_add_dir, $p_remove_dir, $p_as_filename = null)
+    {
+        if (!$this->_file) { $this->_error('Invalid file descriptor'); return false; }
+        if ($p_filename == '') { $this->_error('Invalid file name'); return false; }
+        $p_filename = $this->_translateWinPath($p_filename, false);
+        $v_stored_filename = $p_as_filename ? $this->_translateWinPath($p_as_filename, false) : $p_filename;
+        if (strcmp($p_filename, $p_remove_dir) == 0) return true;
+        if ($p_remove_dir != '') {
+            if (substr($p_remove_dir, -1) != '/') $p_remove_dir .= '/';
+            if (substr($p_filename, 0, strlen($p_remove_dir)) == $p_remove_dir)
+                $v_stored_filename = substr($p_filename, strlen($p_remove_dir));
+        }
+        $v_stored_filename = $this->_translateWinPath($v_stored_filename);
+        if ($p_add_dir != '') {
+            $v_stored_filename = (substr($p_add_dir, -1) == '/')
+                ? $p_add_dir.$v_stored_filename
+                : $p_add_dir.'/'.$v_stored_filename;
+        }
+        $v_stored_filename = $this->_pathReduction($v_stored_filename);
+        if ($this->_isArchive($p_filename)) {
+            if (($v_file = @fopen($p_filename, "rb")) == 0) {
+                $this->_warning("Unable to open file '".$p_filename."' in binary read mode");
+                return true;
+            }
+            if (!$this->_writeHeader($p_filename, $v_stored_filename)) return false;
+            while (($v_buffer = fread($v_file, 512)) != '') {
+                $this->_writeBlock(pack("a512", "$v_buffer"));
+            }
+            fclose($v_file);
+        } else {
+            if (!$this->_writeHeader($p_filename, $v_stored_filename)) return false;
+        }
+        return true;
+    }
+
+    function _addString($p_filename, $p_string)
+    {
+        if (!$this->_file) { $this->_error('Invalid file descriptor'); return false; }
+        if ($p_filename == '') { $this->_error('Invalid file name'); return false; }
+        $p_filename = $this->_translateWinPath($p_filename, false);
+        if (!$this->_writeHeaderBlock($p_filename, strlen($p_string), time(), 384, "", 0, 0))
+            return false;
+        $i = 0;
+        while (($v_buffer = substr($p_string, (($i++)*512), 512)) != '') {
+            $this->_writeBlock(pack("a512", $v_buffer));
+        }
+        return true;
+    }
+
+    function _writeHeader($p_filename, $p_stored_filename)
+    {
+        if ($p_stored_filename == '') $p_stored_filename = $p_filename;
+        $v_reduce_filename = $this->_pathReduction($p_stored_filename);
+        if (strlen($v_reduce_filename) > 99) {
+            if (!$this->_writeLongHeader($v_reduce_filename)) return false;
+        }
+        $v_info  = lstat($p_filename);
+        $v_uid   = sprintf("%07s", DecOct($v_info[4]));
+        $v_gid   = sprintf("%07s", DecOct($v_info[5]));
+        $v_perms = sprintf("%07s", DecOct($v_info['mode'] & 000777));
+        $v_mtime = sprintf("%011s", DecOct($v_info['mtime']));
+        $v_linkname = '';
+        if (@is_link($p_filename)) {
+            $v_typeflag = '2';
+            $v_linkname = readlink($p_filename);
+            $v_size = sprintf("%011s", DecOct(0));
+        } elseif (@is_dir($p_filename)) {
+            $v_typeflag = "5";
+            $v_size = sprintf("%011s", DecOct(0));
+        } else {
+            $v_typeflag = '0';
+            clearstatcache();
+            $v_size = sprintf("%011s", DecOct($v_info['size']));
+        }
+        $v_magic = 'ustar ';
+        $v_version = ' ';
+        if (function_exists('posix_getpwuid')) {
+            $userinfo  = posix_getpwuid($v_info[4]);
+            $groupinfo = posix_getgrgid($v_info[5]);
+            $v_uname = $userinfo['name'];
+            $v_gname = $groupinfo['name'];
+        } else {
+            $v_uname = '';
+            $v_gname = '';
+        }
+        $v_binary_data_first = pack("a100a8a8a8a12a12",
+            $v_reduce_filename, $v_perms, $v_uid, $v_gid, $v_size, $v_mtime);
+        $v_binary_data_last = pack("a1a100a6a2a32a32a8a8a155a12",
+            $v_typeflag, $v_linkname, $v_magic, $v_version, $v_uname, $v_gname, '', '', '', '');
+        $v_checksum = 0;
+        for ($i=0; $i<148; $i++) $v_checksum += ord(substr($v_binary_data_first,$i,1));
+        for ($i=148; $i<156; $i++) $v_checksum += ord(' ');
+        for ($i=156, $j=0; $i<512; $i++, $j++) $v_checksum += ord(substr($v_binary_data_last,$j,1));
+        $this->_writeBlock($v_binary_data_first, 148);
+        $this->_writeBlock(pack("a8", sprintf("%06s ", DecOct($v_checksum))), 8);
+        $this->_writeBlock($v_binary_data_last, 356);
+        return true;
+    }
+
+    function _writeHeaderBlock($p_filename, $p_size, $p_mtime=0, $p_perms=0,
+                               $p_type='', $p_uid=0, $p_gid=0)
+    {
+        $p_filename = $this->_pathReduction($p_filename);
+        if (strlen($p_filename) > 99) {
+            if (!$this->_writeLongHeader($p_filename)) return false;
+        }
+        $v_size  = ($p_type == "5") ? sprintf("%011s", DecOct(0)) : sprintf("%011s", DecOct($p_size));
+        $v_uid   = sprintf("%07s", DecOct($p_uid));
+        $v_gid   = sprintf("%07s", DecOct($p_gid));
+        $v_perms = sprintf("%07s", DecOct($p_perms & 000777));
+        $v_mtime = sprintf("%11s", DecOct($p_mtime));
+        if (function_exists('posix_getpwuid')) {
+            $v_uname = posix_getpwuid($p_uid)['name'] ?? '';
+            $v_gname = posix_getgrgid($p_gid)['name'] ?? '';
+        } else {
+            $v_uname = '';
+            $v_gname = '';
+        }
+        $v_binary_data_first = pack("a100a8a8a8a12A12",
+            $p_filename, $v_perms, $v_uid, $v_gid, $v_size, $v_mtime);
+        $v_binary_data_last = pack("a1a100a6a2a32a32a8a8a155a12",
+            $p_type, '', 'ustar ', ' ', $v_uname, $v_gname, '', '', '', '');
+        $v_checksum = 0;
+        for ($i=0; $i<148; $i++) $v_checksum += ord(substr($v_binary_data_first,$i,1));
+        for ($i=148; $i<156; $i++) $v_checksum += ord(' ');
+        for ($i=156, $j=0; $i<512; $i++, $j++) $v_checksum += ord(substr($v_binary_data_last,$j,1));
+        $this->_writeBlock($v_binary_data_first, 148);
+        $this->_writeBlock(pack("a8", sprintf("%06s ", DecOct($v_checksum))), 8);
+        $this->_writeBlock($v_binary_data_last, 356);
+        return true;
+    }
+
+    function _writeLongHeader($p_filename)
+    {
+        $v_size = sprintf("%11s ", DecOct(strlen($p_filename)));
+        $v_binary_data_first = pack("a100a8a8a8a12a12", '././@LongLink', 0, 0, 0, $v_size, 0);
+        $v_binary_data_last  = pack("a1a100a6a2a32a32a8a8a155a12", 'L', '', '', '', '', '', '', '', '', '');
+        $v_checksum = 0;
+        for ($i=0; $i<148; $i++) $v_checksum += ord(substr($v_binary_data_first,$i,1));
+        for ($i=148; $i<156; $i++) $v_checksum += ord(' ');
+        for ($i=156, $j=0; $i<512; $i++, $j++) $v_checksum += ord(substr($v_binary_data_last,$j,1));
+        $this->_writeBlock($v_binary_data_first, 148);
+        $this->_writeBlock(pack("a8", sprintf("%06s ", DecOct($v_checksum))), 8);
+        $this->_writeBlock($v_binary_data_last, 356);
+        $i = 0;
+        while (($v_buffer = substr($p_filename, (($i++)*512), 512)) != '') {
+            $this->_writeBlock(pack("a512", "$v_buffer"));
+        }
+        return true;
+    }
+
+    function _append($p_filelist, $p_add_dir='', $p_remove_dir='')
+    {
+        if (!$this->_openAppend()) return false;
+        if ($this->_addList($p_filelist, $p_add_dir, $p_remove_dir))
+            $this->_writeFooter();
+        $this->_close();
+        return true;
+    }
+
+    function _openAppend()
+    {
+        if (filesize($this->_tarname) == 0) return $this->_openWrite();
+        if ($this->_compress) {
+            $this->_close();
+            if (!@rename($this->_tarname, $this->_tarname.".tmp")) {
+                $this->_error('Error while renaming to tmp');
+                return false;
+            }
+            if ($this->_compress_type == 'gz')
+                $v_temp_tar = @gzopen($this->_tarname.".tmp", "rb");
+            elseif ($this->_compress_type == 'bz2')
+                $v_temp_tar = @bzopen($this->_tarname.".tmp", "r");
+            if ($v_temp_tar == 0) {
+                $this->_error('Unable to open tmp file');
+                @rename($this->_tarname.".tmp", $this->_tarname);
+                return false;
+            }
+            if (!$this->_openWrite()) {
+                @rename($this->_tarname.".tmp", $this->_tarname);
+                return false;
+            }
+            if ($this->_compress_type == 'gz') {
+                while (!@gzeof($v_temp_tar)) {
+                    $v_buffer = @gzread($v_temp_tar, 512);
+                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK) continue;
+                    $this->_writeBlock(pack("a512", $v_buffer));
+                }
+                @gzclose($v_temp_tar);
+            } elseif ($this->_compress_type == 'bz2') {
+                while (strlen($v_buffer = @bzread($v_temp_tar, 512)) > 0) {
+                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK) continue;
+                    $this->_writeBlock(pack("a512", $v_buffer));
+                }
+                @bzclose($v_temp_tar);
+            }
+            if (!@unlink($this->_tarname.".tmp"))
+                $this->_error('Error deleting tmp file');
+        } else {
+            if (!$this->_openReadWrite()) return false;
+            clearstatcache();
+            $v_size = filesize($this->_tarname);
+            fseek($this->_file, $v_size - 1024);
+            if (fread($this->_file, 512) == ARCHIVE_TAR_END_BLOCK)
+                fseek($this->_file, $v_size - 1024);
+            elseif (fread($this->_file, 512) == ARCHIVE_TAR_END_BLOCK)
+                fseek($this->_file, $v_size - 512);
+        }
+        return true;
+    }
+
+    function _openReadWrite()
+    {
+        if ($this->_compress_type == 'gz')
+            $this->_file = @gzopen($this->_tarname, "r+b");
+        else if ($this->_compress_type == 'bz2') {
+            $this->_error('Unable to open bz2 in read/write mode');
+            return false;
+        } else if ($this->_compress_type == 'none')
+            $this->_file = @fopen($this->_tarname, "r+b");
+        if ($this->_file == 0) {
+            $this->_error('Unable to open in read/write mode \''.$this->_tarname.'\'');
+            return false;
+        }
+        return true;
+    }
+
+    function _dirCheck($p_dir)
+    {
+        clearstatcache();
+        if ((@is_dir($p_dir)) || ($p_dir == '')) return true;
+        $p_parent_dir = dirname($p_dir);
+        if (($p_parent_dir != $p_dir) && ($p_parent_dir != '') && (!$this->_dirCheck($p_parent_dir)))
+            return false;
+        if (!@mkdir($p_dir, 0777)) {
+            $this->_error("Unable to create directory '$p_dir'");
+            return false;
+        }
+        return true;
+    }
+
+    function _pathReduction($p_dir)
+    {
+        $v_result = '';
+        if ($p_dir != '') {
+            $v_list = explode('/', $p_dir);
+            for ($i=sizeof($v_list)-1; $i>=0; $i--) {
+                if ($v_list[$i] == ".") {
+                    // ignore
+                } else if ($v_list[$i] == "..") {
+                    $i--;
+                } else if ($v_list[$i] == '' && $i != (sizeof($v_list)-1) && $i != 0) {
+                    // ignore double slashes
+                } else {
+                    $v_result = $v_list[$i].($i != (sizeof($v_list)-1) ? '/'.$v_result : '');
+                }
+            }
+        }
+        return strtr($v_result, '\\', '/');
+    }
+
+    function _translateWinPath($p_path, $p_remove_disk_letter=true)
+    {
+        if (defined('OS_WINDOWS') && OS_WINDOWS) {
+            if ($p_remove_disk_letter && (($v_position = strpos($p_path, ':')) != false))
+                $p_path = substr($p_path, $v_position+1);
+            if ((strpos($p_path, '\\') > 0) || (substr($p_path, 0, 1) == '\\'))
+                $p_path = strtr($p_path, '\\', '/');
+        }
+        return $p_path;
     }
 }
 

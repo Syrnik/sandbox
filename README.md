@@ -2,6 +2,8 @@
 
 Приложение для Webasyst Framework — интерактивная «песочница» для разработки и отладки PHP и Smarty-кода прямо в бэкенде.
 
+[![PHP Compatibility](https://github.com/Syrnik/sandbox/actions/workflows/main.yml/badge.svg)](https://github.com/Syrnik/sandbox/actions/workflows/main.yml)
+
 ## Возможности
 
 - Редактор PHP-кода с подсветкой синтаксиса (ACE editor)
