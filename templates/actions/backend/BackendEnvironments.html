@@ -3,15 +3,19 @@
         <div class="box">
             <div class="flexbox middle space-8">
                 <h1 class="wide">Окружения</h1>
-                <a href="?module=backend" class="button light-gray">&#8592; {_w('Редактор')|escape}</a>
+                <a href="?module=backend" class="button light-gray">{_w('Редактор')|escape}</a>
                 <a href="?module=backend&action=catalog" class="button light-gray">{_w('Каталог сниппетов')|escape}</a>
+                <label class="button light-gray">
+                    <i class="fas fa-file-upload"></i> Загрузить
+                    <input type="file" id="import-env-file" accept=".json" class="hidden">
+                </label>
             </div>
         </div>
     </div>
 </div>
 
-<div class="flexbox">
-    <div class="sidebar" style="width:260px;min-width:260px">
+<div class="flexbox sandbox-env-layout">
+    <div class="sidebar sandbox-env-sidebar" style="width:260px;min-width:260px">
         <div class="box">
             <button id="btn-add-env" class="button green small full-width">&#43; Добавить окружение</button>
         </div>
@@ -19,8 +23,8 @@
             {foreach $environments as $env}
             <li>
                 <a href="#" class="js-select-env" data-id="{$env.id}">
-                    {$env.name|escape}
-                    {if $env.is_shared}<span class="hint small">&#127760;</span>{/if}
+                    {if $env.is_shared}<i class="fas fa-globe text-blue"></i>{else}<i class="fas fa-lock text-yellow"></i>{/if}
+                    <span>{$env.name|escape}</span>
                 </a>
             </li>
             {/foreach}
@@ -28,37 +32,47 @@
     </div>
 
     <div class="content wide" id="env-editor" style="display:none">
-        <div class="box">
-            <div class="flexbox middle space-8">
-                <input type="hidden" id="env-id" value="">
-                <input type="text" id="env-name" class="bold wide" placeholder="Название окружения">
-                <label class="inline-block">
-                    <input type="checkbox" id="env-shared"> Общий доступ
-                </label>
-            </div>
-        </div>
-
-        <div class="box">
-            <table class="zebra full-width" id="vars-table">
-                <thead>
-                    <tr>
-                        <th>Переменная</th>
-                        <th>Значение</th>
-                        <th style="width:40px"></th>
-                    </tr>
-                </thead>
-                <tbody id="vars-body">
-                </tbody>
-            </table>
+        <div class="sandbox-env-scroll">
             <div class="box">
-                <button id="btn-add-var" class="button light-gray small">&#43; Добавить переменную</button>
+                <div class="flexbox middle space-8">
+                    <input type="hidden" id="env-id" value="">
+                    <input type="text" id="env-name" class="bold wide" placeholder="Название окружения">
+                    <label class="inline-block">
+                        <span class="wa-checkbox">
+                            <input type="checkbox" id="env-shared">
+                            <span>
+                                <span class="icon">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </span>
+                        </span>
+                        Общий доступ
+                    </label>
+                </div>
+            </div>
+
+            <div class="box">
+                <table class="zebra full-width" id="vars-table">
+                    <thead>
+                        <tr>
+                            <th>Переменная</th>
+                            <th>Значение</th>
+                            <th style="width:40px"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="vars-body">
+                    </tbody>
+                </table>
+                <div class="box">
+                    <button id="btn-add-var" class="button light-gray small"><i class="fas fa-plus"></i> Добавить переменную</button>
+                </div>
             </div>
         </div>
 
-        <div class="box">
-            <button id="btn-save-env" class="button blue">&#128190; Сохранить</button>
-            <button id="btn-delete-env" class="button red">&#128465; Удалить</button>
-            <button id="btn-export-env" class="button light-gray">&#8681; Экспорт</button>
+        <div class="sandbox-env-actions">
+            <button id="btn-save-env" class="button blue"><i class="fas fa-save"></i> Сохранить</button>
+            <button id="btn-delete-env" class="button red"><i class="fas fa-trash-alt"></i> Удалить</button>
+            <button id="btn-export-env" class="button light-gray"><i class="fas fa-file-download"></i> Экспорт</button>
         </div>
     </div>
 

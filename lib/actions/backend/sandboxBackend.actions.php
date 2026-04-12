@@ -199,10 +199,15 @@ class sandboxBackendActions extends waJsonActions
     // ОКРУЖЕНИЯ
     // ========================
 
-    public function environmentsAction(): void
+    public function environmentListAction(): void
     {
         $model = new sandboxEnvironmentModel();
-        $this->response = $model->getAccessible($this->getUserId());
+        $list = $model->getAccessible($this->getUserId());
+        foreach ($list as &$env) {
+            $env['is_shared'] = (int)$env['is_shared'];
+        }
+        unset($env);
+        $this->response = $list;
     }
 
     public function environmentAction(): void
@@ -215,6 +220,7 @@ class sandboxBackendActions extends waJsonActions
             return;
         }
         $this->checkAccess($env);
+        $env['is_shared'] = (int)$env['is_shared'];
         $env['variables_parsed'] = $model->getVariables($id);
         $this->response = $env;
     }
@@ -228,17 +234,26 @@ class sandboxBackendActions extends waJsonActions
             'variables' => waRequest::post('variables', '{}', 'string'),
         ];
 
+        if (empty($data['name'])) {
+            $this->errors = 'Укажите название окружения';
+            return;
+        }
+
         $decoded = json_decode($data['variables'], true);
         if ($decoded === null && $data['variables'] !== '{}') {
             $this->errors = 'Невалидный JSON в переменных';
             return;
         }
-        $data['variables'] = json_encode($decoded ?: [], JSON_UNESCAPED_UNICODE);
+        $decoded = $decoded ?: [];
 
-        if (empty($data['name'])) {
-            $this->errors = 'Название обязательно';
-            return;
+        foreach (array_keys($decoded) as $key) {
+            if (trim($key) === '') {
+                $this->errors = 'Укажите названия всех переменных';
+                return;
+            }
         }
+
+        $data['variables'] = json_encode($decoded, JSON_UNESCAPED_UNICODE);
 
         $model = new sandboxEnvironmentModel();
         if ($id) {

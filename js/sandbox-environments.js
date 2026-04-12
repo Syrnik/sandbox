@@ -5,8 +5,9 @@
         constructor(options) {
             options = options || {};
             this.l10n = Object.assign({
-                name_required:  'Укажите название',
-                confirm_delete: 'Удалить окружение?',
+                name_required:    'Укажите название окружения',
+                var_key_required: 'Укажите названия всех переменных',
+                confirm_delete:   'Удалить окружение?',
             }, options.l10n || {});
         }
 
@@ -14,6 +15,14 @@
 
         init() {
             this.bindEvents();
+            this.adjustLayout();
+            $(window).on('resize', () => this.adjustLayout());
+        }
+
+        adjustLayout() {
+            const el = document.querySelector('.sandbox-env-layout');
+            if (!el) return;
+            el.style.height = (window.innerHeight - el.getBoundingClientRect().top) + 'px';
         }
 
         bindEvents() {
@@ -30,6 +39,15 @@
             $("#btn-save-env").on("click", () => this.saveEnvironment());
             $("#btn-delete-env").on("click", () => this.deleteEnvironment());
             $("#btn-export-env").on("click", () => this.exportEnvironment());
+
+            $("#import-env-file").on("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => this.importEnvironment(ev.target.result);
+                reader.readAsText(file);
+                $(e.target).val("");
+            });
         }
 
         loadEnvironment(id) {
@@ -65,7 +83,7 @@
         addVarRow(key = "", value = "") {
             const row = `
                 <tr class="js-var-row">
-                    <td><input type="text" class="js-var-key full-width" value="${$("<div>").text(key).html()}" placeholder="VARIABLE_NAME"></td>
+                    <td><input type="text" class="js-var-key full-width" value="${$("<div>").text(key).html()}" placeholder="VARIABLE_NAME" oninput="this.classList.remove('state-error')"></td>
                     <td><input type="text" class="js-var-value full-width" value="${$("<div>").text(value).html()}" placeholder="value"></td>
                     <td><button type="button" class="js-remove-var button red small">&#8722;</button></td>
                 </tr>
@@ -78,14 +96,30 @@
 
         saveEnvironment() {
             const name = $("#env-name").val().trim();
-            if (!name) { alert(this.l10n.name_required); return; }
+            if (!name) {
+                SandboxToast.show(this.l10n.name_required, 'error');
+                $("#env-name").trigger('focus');
+                return;
+            }
 
             const variables = {};
+            let hasEmptyKey = false;
             $("#vars-body .js-var-row").each(function () {
-                const key = $(this).find(".js-var-key").val().trim();
+                const $key = $(this).find(".js-var-key");
+                const key = $key.val().trim();
                 const val = $(this).find(".js-var-value").val();
-                if (key) variables[key] = val;
+                if (!key) {
+                    $key.addClass('state-error');
+                    hasEmptyKey = true;
+                } else {
+                    $key.removeClass('state-error');
+                    variables[key] = val;
+                }
             });
+            if (hasEmptyKey) {
+                SandboxToast.show(this.l10n.var_key_required, 'error');
+                return;
+            }
 
             const data = {
                 id:        this.currentEnvId ?? "",
@@ -103,7 +137,7 @@
                     if (status !== "ok") return;
                     this.currentEnvId = env.id;
                     $("#env-id").val(env.id);
-                    $.wa.notice("Окружение сохранено");
+                    SandboxToast.show('Окружение сохранено');
                     this.refreshEnvList();
                 },
             });
@@ -111,15 +145,21 @@
 
         deleteEnvironment() {
             if (!this.currentEnvId) return;
-            if (!confirm(this.l10n.confirm_delete)) return;
 
-            $.ajax({
-                url: "?module=backend&action=environmentDelete",
-                type: "POST",
-                data: { id: this.currentEnvId },
-                dataType: "json",
-                success: ({ status }) => {
-                    if (status === "ok") location.reload();
+            $.wa.confirm({
+                text: this.l10n.confirm_delete,
+                success_button_title: 'Удалить',
+                success_button_class: 'red',
+                onSuccess: () => {
+                    $.ajax({
+                        url: "?module=backend&action=environmentDelete",
+                        type: "POST",
+                        data: { id: this.currentEnvId },
+                        dataType: "json",
+                        success: ({ status }) => {
+                            if (status === "ok") location.reload();
+                        },
+                    });
                 },
             });
         }
@@ -144,9 +184,24 @@
             });
         }
 
+        importEnvironment(jsonText) {
+            $.ajax({
+                url: "?module=backend&action=import",
+                type: "POST",
+                data: { data: jsonText },
+                dataType: "json",
+                success: ({ status, data: env }) => {
+                    if (status !== "ok") return;
+                    SandboxToast.show('Окружение импортировано');
+                    this.refreshEnvList();
+                    if (env?.id) this.loadEnvironment(env.id);
+                },
+            });
+        }
+
         refreshEnvList() {
             $.ajax({
-                url: "?module=backend&action=environments",
+                url: "?module=backend&action=environmentList",
                 cache: true,
                 dataType: "json",
                 success: ({ status, data: envs }) => {
@@ -154,8 +209,10 @@
                     const $list = $("#env-list");
                     $list.empty();
                     envs.forEach(env => {
-                        const shared = env.is_shared ? ' <span class="hint small">&#127760;</span>' : "";
-                        $list.append(`<li><a href="#" class="js-select-env" data-id="${env.id}">${$("<div>").text(env.name).html()}${shared}</a></li>`);
+                        const icon = env.is_shared
+                            ? '<i class="fas fa-globe text-blue"></i>'
+                            : '<i class="fas fa-lock text-yellow"></i>';
+                        $list.append(`<li><a href="#" class="js-select-env" data-id="${env.id}">${icon} <span>${$("<div>").text(env.name).html()}</span></a></li>`);
                     });
                     // Mark current
                     $list.find(`[data-id="${this.currentEnvId}"]`).parent().addClass("selected");
