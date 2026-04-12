@@ -11,6 +11,6 @@ return [
         ],
     ],
     'vars_tab_names' => [
-        'sandbox_smarty' => 'Песочница',
+        'sandbox_smarty' => _w('Sandbox'),
     ],
 ];
