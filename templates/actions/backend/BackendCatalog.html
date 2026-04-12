@@ -4,6 +4,7 @@
             <div class="flexbox middle space-8">
                 <h1 class="wide">Каталог сниппетов</h1>
                 <a href="?module=backend" class="button light-gray">&#8592; Редактор</a>
+                <a href="?module=backend&action=environments" class="button light-gray">Окружения</a>
                 <button id="btn-create-folder" class="button green"><i class="fas fa-folder-plus"></i> Создать папку</button>
                 <a href="?module=backend{if $parent_id}&folder_id={$parent_id}{/if}" class="button blue"><i class="fas fa-plus"></i> Создать сниппет</a>
                 <label class="button light-gray">
@@ -101,15 +102,16 @@
             </div>
         </div>
 
-        <div id="bulk-panel" class="box" style="display:none">
-            <div class="flexbox middle space-8">
-                <span>Выбрано: <strong id="selected-count">0</strong></span>
-                <button id="btn-bulk-share" class="button green small">&#127760; Поделиться</button>
-                <button id="btn-bulk-unshare" class="button light-gray small">&#128274; Сделать личным</button>
-                <button id="btn-bulk-move" class="button blue small">&#128194; Переместить</button>
-                <button id="btn-bulk-delete" class="button red small">&#128465; Удалить</button>
-            </div>
-        </div>
+    </div>
+</div>
+
+<div id="bulk-panel" class="sandbox-bulk-panel">
+    <div class="flexbox middle space-8">
+        <span>Выбрано: <strong id="selected-count">0</strong></span>
+        <button id="btn-bulk-share" class="button green small"><i class="fas fa-globe"></i> Сделать общим</button>
+        <button id="btn-bulk-unshare" class="button light-gray small"><i class="fas fa-lock"></i> Сделать личным</button>
+        <button id="btn-bulk-move" class="button blue small"><i class="fas fa-folder"></i> Переместить</button>
+        <button id="btn-bulk-delete" class="button red small"><i class="fas fa-trash-alt"></i> Удалить</button>
     </div>
 </div>
 <script>
@@ -136,7 +138,7 @@
                 duplicate_snippet:   {_w('Дублировать')|json_encode:256},
                 copy_to_me:          {_w('Копировать к себе')|json_encode:256},
                 make_private:        {_w('Сделать личным')|json_encode:256},
-                share_btn:           {_w('Поделиться')|json_encode:256},
+                share_btn:           {_w('Сделать общим')|json_encode:256},
                 open_snippet:        {_w('Открыть в редакторе')|json_encode:256},
                 open_folder:         {_w('Открыть')|json_encode:256},
                 edit_folder:         {_w('Редактировать')|json_encode:256},

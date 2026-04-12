@@ -24,7 +24,7 @@
                 duplicate_snippet:   'Дублировать',
                 copy_to_me:          'Копировать к себе',
                 make_private:        'Сделать личным',
-                share_btn:           'Поделиться',
+                share_btn:           'Сделать общим',
                 open_snippet:        'Открыть в редакторе',
                 open_folder:         'Открыть',
                 edit_folder:         'Редактировать',
@@ -111,11 +111,16 @@
 
         updateBulkPanel() {
             const count = this.selectedItems.size;
+            const $panel = $("#bulk-panel");
             if (count > 0) {
                 $("#selected-count").text(count);
-                $("#bulk-panel").show();
+                $panel.addClass("is-visible");
+                $(".content:first").css("padding-bottom", $panel.outerHeight() + 16 + "px");
+                const hasFolders = [...this.selectedItems.values()].some(({ type }) => type === "folder");
+                $("#btn-bulk-move").toggle(!hasFolders);
             } else {
-                $("#bulk-panel").hide();
+                $panel.removeClass("is-visible");
+                $(".content:first").css("padding-bottom", "");
             }
         }
 
