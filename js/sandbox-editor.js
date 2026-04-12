@@ -22,6 +22,8 @@
                 name_required:      'Укажите название сниппета',
                 access_shared:      'Общий доступ',
                 access_personal:    'Личный',
+                saved:              'Сниппет сохранён',
+                save_error:         'Ошибка при сохранении',
             }, options.l10n || {});
             this.folders = options.folders || [];
         }
@@ -291,12 +293,19 @@
                             data,
                             dataType: "json",
                             success: ({ status, data: snippet }) => {
-                                if (status !== "ok") return;
+                                if (status !== "ok") {
+                                    SandboxToast.show(this.l10n.save_error, 'error');
+                                    return;
+                                }
                                 this.currentSnippetId = parseInt(snippet.id);
                                 this.currentFolderId  = snippet.folder_id ? parseInt(snippet.folder_id) : null;
                                 this.#updateMeta(newName, newDesc, newShared);
                                 this.saveToLocalStorage();
                                 $wrapper.trigger("dialog-close");
+                                SandboxToast.show(this.l10n.saved);
+                            },
+                            error: () => {
+                                SandboxToast.show(this.l10n.save_error, 'error');
                             },
                         });
                     });
