@@ -16,6 +16,7 @@
     flex-direction: column;
     gap: 8px;
     min-height: 0;
+    min-width: 0;
 }
 
 /* Блок с Ace-редактором — растягивается равномерно */
@@ -45,6 +46,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    min-width: 0;
 }
 
 .sandbox-result-box {
@@ -59,7 +61,7 @@
     flex: 1;
     min-height: 0;
     max-height: none;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 /* ============================
