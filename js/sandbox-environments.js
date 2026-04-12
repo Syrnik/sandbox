@@ -8,6 +8,8 @@
                 name_required:    'Укажите название окружения',
                 var_key_required: 'Укажите названия всех переменных',
                 confirm_delete:   'Удалить окружение?',
+                delete_btn:       'Удалить',
+                cancel:           'Отмена',
             }, options.l10n || {});
         }
 
@@ -147,9 +149,10 @@
             if (!this.currentEnvId) return;
 
             $.wa.confirm({
-                text: this.l10n.confirm_delete,
-                success_button_title: 'Удалить',
+                text:                 this.l10n.confirm_delete,
+                success_button_title: this.l10n.delete_btn,
                 success_button_class: 'red',
+                cancel_button_title:  this.l10n.cancel,
                 onSuccess: () => {
                     $.ajax({
                         url: "?module=backend&action=environmentDelete",
