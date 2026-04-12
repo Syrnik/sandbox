@@ -1,7 +1,18 @@
+<div class="content">
+    <div class="box contentbox">
+        <div class="box">
+            <div class="flexbox middle space-8">
+                <h1 class="wide">Окружения</h1>
+                <a href="?module=backend" class="button light-gray">&#8592; {_w('Редактор')|escape}</a>
+                <a href="?module=backend&action=catalog" class="button light-gray">{_w('Каталог сниппетов')|escape}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="flexbox">
     <div class="sidebar" style="width:260px;min-width:260px">
-        <div class="block">
-            <h2>Окружения</h2>
+        <div class="box">
             <button id="btn-add-env" class="button green small full-width">&#43; Добавить окружение</button>
         </div>
         <ul class="menu" id="env-list">
@@ -17,7 +28,7 @@
     </div>
 
     <div class="content wide" id="env-editor" style="display:none">
-        <div class="block">
+        <div class="box">
             <div class="flexbox middle space-8">
                 <input type="hidden" id="env-id" value="">
                 <input type="text" id="env-name" class="bold wide" placeholder="Название окружения">
@@ -27,7 +38,7 @@
             </div>
         </div>
 
-        <div class="block">
+        <div class="box">
             <table class="zebra full-width" id="vars-table">
                 <thead>
                     <tr>
@@ -39,12 +50,12 @@
                 <tbody id="vars-body">
                 </tbody>
             </table>
-            <div class="block">
+            <div class="box">
                 <button id="btn-add-var" class="button light-gray small">&#43; Добавить переменную</button>
             </div>
         </div>
 
-        <div class="block">
+        <div class="box">
             <button id="btn-save-env" class="button blue">&#128190; Сохранить</button>
             <button id="btn-delete-env" class="button red">&#128465; Удалить</button>
             <button id="btn-export-env" class="button light-gray">&#8681; Экспорт</button>
