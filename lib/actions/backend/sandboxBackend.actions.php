@@ -41,7 +41,7 @@ class sandboxBackendActions extends waJsonActions
             'code_php'    => waRequest::post('code_php'),
             'code_smarty' => waRequest::post('code_smarty'),
             'is_shared'   => waRequest::post('is_shared', 0, 'int'),
-            'folder_id'   => waRequest::post('folder_id', null, 'int'),
+            'folder_id'   => waRequest::post('folder_id', 0, 'int') ?: null,
         ];
 
         if (empty($data['name'])) {

@@ -271,7 +271,7 @@
                         const saveAsNew  = hasId && $wrapper.find("#save-dialog-as-new").is(":checked");
                         const newDesc    = $wrapper.find("#save-dialog-desc").val();
                         const newShared  = $wrapper.find("#save-dialog-shared").is(":checked") ? 1 : 0;
-                        const newFolder  = $wrapper.find("#save-dialog-folder").val() || 0;
+                        const newFolder  = $wrapper.find("#save-dialog-folder").val() || "";
 
                         const data = {
                             name:        newName,
