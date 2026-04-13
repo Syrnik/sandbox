@@ -162,9 +162,10 @@
         execute() {
             this.saveToLocalStorage();
 
+            const smartyEnabled = $("#smarty-toggle").is(":checked");
             const data = {
                 code_php:       this.phpEditor.getValue(),
-                code_smarty:    this.smartyEditor.getValue(),
+                code_smarty:    smartyEnabled ? this.smartyEditor.getValue() : '',
                 environment_id: $("#environment-select").val(),
             };
 
