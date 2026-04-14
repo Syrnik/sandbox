@@ -175,8 +175,15 @@
                 url: "?module=backend&action=snippetExecute",
                 type: "POST",
                 data,
-                dataType: "json",
-                success: ({ status, data: result }) => {
+                dataType: "text",
+                success: (responseText, textStatus, jqXHR) => {
+                    const contentType = jqXHR.getResponseHeader("Content-Type") || "";
+                    if (!contentType.includes("application/json")) {
+                        $("#result-output").html(responseText);
+                        $("#result-errors").hide().html("");
+                        return;
+                    }
+                    const { status, data: result } = JSON.parse(responseText);
                     if (status !== "ok") return;
                     $("#result-output").html(result.output || "<em class='hint'>" + this.l10n.no_output + "</em>");
                     if (result.error) {

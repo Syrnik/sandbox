@@ -1,4 +1,5 @@
 <?php
+
 return [
-    'php' => '8.2',
+    'php' => ['version' => '>=8.2'],
 ];
