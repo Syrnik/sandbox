@@ -39,13 +39,18 @@
         init() {
             this.initEditors();
             this.bindEvents();
-            this.restoreFromLocalStorage();
             this.#initAutoSave();
 
             const urlParams = new URLSearchParams(location.search);
             const snippetId = urlParams.get('snippet_id');
+            const isNew = urlParams.get('new') === '1';
+
             if (snippetId) {
                 this.loadSnippet(parseInt(snippetId, 10));
+            } else if (isNew) {
+                this.newSnippet();
+            } else {
+                this.restoreFromLocalStorage();
             }
         }
 
