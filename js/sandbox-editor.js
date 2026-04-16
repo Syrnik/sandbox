@@ -51,7 +51,8 @@
 
         initEditors() {
             this.phpEditor = ace.edit("php-editor");
-            this.phpEditor.session.setMode("ace/mode/php");
+            const PhpMode = ace.require("ace/mode/php").Mode;
+            this.phpEditor.session.setMode(new PhpMode({ inline: true }));
             this.phpEditor.setOptions({ fontSize: "14px", showPrintMargin: false });
 
             this.smartyEditor = ace.edit("smarty-editor");
