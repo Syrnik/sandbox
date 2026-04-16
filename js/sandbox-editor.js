@@ -39,19 +39,25 @@
         init() {
             this.initEditors();
             this.bindEvents();
-            this.restoreFromLocalStorage();
             this.#initAutoSave();
 
             const urlParams = new URLSearchParams(location.search);
             const snippetId = urlParams.get('snippet_id');
+            const isNew = urlParams.get('new') === '1';
+
             if (snippetId) {
                 this.loadSnippet(parseInt(snippetId, 10));
+            } else if (isNew) {
+                this.newSnippet();
+            } else {
+                this.restoreFromLocalStorage();
             }
         }
 
         initEditors() {
             this.phpEditor = ace.edit("php-editor");
-            this.phpEditor.session.setMode("ace/mode/php");
+            const PhpMode = ace.require("ace/mode/php").Mode;
+            this.phpEditor.session.setMode(new PhpMode({ inline: true }));
             this.phpEditor.setOptions({ fontSize: "14px", showPrintMargin: false });
 
             this.smartyEditor = ace.edit("smarty-editor");
