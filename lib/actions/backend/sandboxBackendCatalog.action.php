@@ -8,8 +8,8 @@ class sandboxBackendCatalogAction extends waViewAction
 
         $contactId = (int) wa()->getUser()->getId();
 
-        $folderModel = new sandboxFolderModel();
-        $snippetModel = new sandboxSnippetModel();
+        $folderModel = sandbox()->getModel('Folder');
+        $snippetModel = sandbox()->getModel('Snippet');
 
         $parentId = waRequest::get('folder_id', null, 'int');
 

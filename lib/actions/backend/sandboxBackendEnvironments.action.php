@@ -7,7 +7,7 @@ class sandboxBackendEnvironmentsAction extends waViewAction
         $this->setLayout(new sandboxDefaultLayout());
 
         $contactId = (int) wa()->getUser()->getId();
-        $envModel = new sandboxEnvironmentModel();
+        $envModel = sandbox()->getModel('Environment');
         $environments = $envModel->getAccessible($contactId);
 
         wa()->getResponse()->addCss('css/sandbox.css', 'sandbox');

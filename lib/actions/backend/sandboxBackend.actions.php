@@ -9,7 +9,7 @@ class sandboxBackendActions extends waJsonActions
     public function snippetAction(): void
     {
         $id = waRequest::get('id', 0, 'int');
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
         $snippet = $model->getById($id);
         if (!$snippet) {
             $this->errors = 'Сниппет не найден';
@@ -23,7 +23,7 @@ class sandboxBackendActions extends waJsonActions
     {
         $contactId = $this->getUserId();
         $folderId = waRequest::get('folder_id', null, 'int');
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
 
         if ($folderId !== null) {
             $this->response = $model->getAccessible($contactId, $folderId);
@@ -49,7 +49,7 @@ class sandboxBackendActions extends waJsonActions
             return;
         }
 
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
         if ($id) {
             $existing = $model->getById($id);
             $this->checkOwnership($existing);
@@ -70,7 +70,7 @@ class sandboxBackendActions extends waJsonActions
             $folderId = null;
         }
 
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
         foreach ($ids as $id) {
             $snippet = $model->getById($id);
             $this->checkOwnership($snippet);
@@ -82,7 +82,7 @@ class sandboxBackendActions extends waJsonActions
     public function snippetDuplicateAction(): void
     {
         $id = waRequest::post('id', 0, 'int');
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
         $snippet = $model->getById($id);
         $this->checkAccess($snippet);
         $newId = $model->add([
@@ -103,8 +103,8 @@ class sandboxBackendActions extends waJsonActions
         $folderIds  = waRequest::post('folder_ids', [], 'array_int');
         $isShared   = waRequest::post('is_shared', 0, 'int');
 
-        $snippetModel = new sandboxSnippetModel();
-        $folderModel  = new sandboxFolderModel();
+        $snippetModel = sandbox()->getModel('Snippet');
+        $folderModel  = sandbox()->getModel('Folder');
 
         foreach ($snippetIds as $id) {
             $snippet = $snippetModel->getById($id);
@@ -122,7 +122,7 @@ class sandboxBackendActions extends waJsonActions
     public function snippetDeleteAction(): void
     {
         $ids = waRequest::post('ids', [], 'array_int');
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
         $contactId = $this->getUserId();
         foreach ($ids as $id) {
             $snippet = $model->getById($id);
@@ -151,7 +151,7 @@ class sandboxBackendActions extends waJsonActions
 
     public function foldersAction(): void
     {
-        $model = new sandboxFolderModel();
+        $model = sandbox()->getModel('Folder');
         $this->response = $model->getTree($this->getUserId());
     }
 
@@ -171,7 +171,7 @@ class sandboxBackendActions extends waJsonActions
             return;
         }
 
-        $model = new sandboxFolderModel();
+        $model = sandbox()->getModel('Folder');
         if ($id) {
             $existing = $model->getById($id);
             $this->checkOwnership($existing);
@@ -188,7 +188,7 @@ class sandboxBackendActions extends waJsonActions
     public function folderDeleteAction(): void
     {
         $id = waRequest::post('id', 0, 'int');
-        $model = new sandboxFolderModel();
+        $model = sandbox()->getModel('Folder');
         $folder = $model->getById($id);
         $this->checkOwnership($folder);
         $this->deleteFolderRecursive($id);
@@ -201,7 +201,7 @@ class sandboxBackendActions extends waJsonActions
 
     public function environmentListAction(): void
     {
-        $model = new sandboxEnvironmentModel();
+        $model = sandbox()->getModel('Environment');
         $list = $model->getAccessible($this->getUserId());
         foreach ($list as &$env) {
             $env['is_shared'] = (int)$env['is_shared'];
@@ -213,7 +213,7 @@ class sandboxBackendActions extends waJsonActions
     public function environmentAction(): void
     {
         $id = waRequest::get('id', 0, 'int');
-        $model = new sandboxEnvironmentModel();
+        $model = sandbox()->getModel('Environment');
         $env = $model->getById($id);
         if (!$env) {
             $this->errors = 'Окружение не найдено';
@@ -255,7 +255,7 @@ class sandboxBackendActions extends waJsonActions
 
         $data['variables'] = json_encode($decoded, JSON_UNESCAPED_UNICODE);
 
-        $model = new sandboxEnvironmentModel();
+        $model = sandbox()->getModel('Environment');
         if ($id) {
             $existing = $model->getById($id);
             $this->checkOwnership($existing);
@@ -271,7 +271,7 @@ class sandboxBackendActions extends waJsonActions
     public function environmentDeleteAction(): void
     {
         $id = waRequest::post('id', 0, 'int');
-        $model = new sandboxEnvironmentModel();
+        $model = sandbox()->getModel('Environment');
         $env = $model->getById($id);
         $this->checkOwnership($env);
         $model->deleteById($id);
@@ -380,8 +380,8 @@ class sandboxBackendActions extends waJsonActions
 
     private function deleteFolderRecursive(int $folderId): void
     {
-        $folderModel = new sandboxFolderModel();
-        $snippetModel = new sandboxSnippetModel();
+        $folderModel = sandbox()->getModel('Folder');
+        $snippetModel = sandbox()->getModel('Snippet');
 
         $snippetModel->deleteByField('folder_id', $folderId);
 
@@ -395,7 +395,7 @@ class sandboxBackendActions extends waJsonActions
 
     private function exportSnippet(int $id, int $contactId): array
     {
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
         $snippet = $model->getById($id);
         $this->checkAccess($snippet);
         return [
@@ -410,7 +410,7 @@ class sandboxBackendActions extends waJsonActions
 
     private function exportFolder(int $id, int $contactId): array
     {
-        $folderModel = new sandboxFolderModel();
+        $folderModel = sandbox()->getModel('Folder');
         $folder = $folderModel->getById($id);
         $this->checkAccess($folder);
 
@@ -426,7 +426,7 @@ class sandboxBackendActions extends waJsonActions
 
     private function exportFolderContents(int $folderId): array
     {
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
         $snippets = $model->getByField('folder_id', $folderId, true);
         return array_map(fn($s) => [
             'name'        => $s['name'],
@@ -438,7 +438,7 @@ class sandboxBackendActions extends waJsonActions
 
     private function exportSubfolders(int $parentId): array
     {
-        $model = new sandboxFolderModel();
+        $model = sandbox()->getModel('Folder');
         $children = $model->getByField('parent_id', $parentId, true);
         return array_map(fn($f) => [
             'name'        => $f['name'],
@@ -450,7 +450,7 @@ class sandboxBackendActions extends waJsonActions
 
     private function exportEnvironment(int $id, int $contactId): array
     {
-        $model = new sandboxEnvironmentModel();
+        $model = sandbox()->getModel('Environment');
         $env = $model->getById($id);
         $this->checkAccess($env);
         return [
@@ -463,7 +463,7 @@ class sandboxBackendActions extends waJsonActions
 
     private function importSnippet(array $data, int $contactId): array
     {
-        $model = new sandboxSnippetModel();
+        $model = sandbox()->getModel('Snippet');
         $newId = $model->add([
             'contact_id'  => $contactId,
             'name'        => $data['name'] ?? _w('Imported snippet'),
@@ -477,7 +477,7 @@ class sandboxBackendActions extends waJsonActions
 
     private function importFolder(array $data, int $contactId, ?int $parentId = null): array
     {
-        $folderModel = new sandboxFolderModel();
+        $folderModel = sandbox()->getModel('Folder');
         $folderId = $folderModel->add([
             'contact_id'  => $contactId,
             'parent_id'   => $parentId,
@@ -486,7 +486,7 @@ class sandboxBackendActions extends waJsonActions
             'is_shared'   => 0,
         ]);
 
-        $snippetModel = new sandboxSnippetModel();
+        $snippetModel = sandbox()->getModel('Snippet');
         foreach (($data['snippets'] ?? []) as $sData) {
             $snippetModel->add([
                 'contact_id'  => $contactId,
@@ -508,7 +508,7 @@ class sandboxBackendActions extends waJsonActions
 
     private function importEnvironment(array $data, int $contactId): array
     {
-        $model = new sandboxEnvironmentModel();
+        $model = sandbox()->getModel('Environment');
         $newId = $model->add([
             'contact_id' => $contactId,
             'name'       => $data['name'] ?? _w('Imported environment'),

@@ -8,13 +8,13 @@ class sandboxBackendAction extends waViewAction
 
         $contactId = (int) wa()->getUser()->getId();
 
-        $snippetModel = new sandboxSnippetModel();
+        $snippetModel = sandbox()->getModel('Snippet');
         $recentSnippets = $snippetModel->getRecent($contactId);
 
-        $envModel = new sandboxEnvironmentModel();
+        $envModel = sandbox()->getModel('Environment');
         $environments = $envModel->getAccessible($contactId);
 
-        $folderModel = new sandboxFolderModel();
+        $folderModel = sandbox()->getModel('Folder');
         $folders = $folderModel->getAccessible($contactId);
 
         wa()->getResponse()->addCss('css/sandbox.css', 'sandbox');

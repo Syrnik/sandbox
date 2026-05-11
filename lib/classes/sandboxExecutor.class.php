@@ -20,11 +20,11 @@ class sandboxExecutor
 
         $envVars = [];
         if ($environmentId > 0) {
-            $envModel = new sandboxEnvironmentModel();
+            $envModel = sandbox()->getModel('Environment');
             $envVars = $envModel->getVariables($environmentId);
         }
 
-        $sandbox = new sandboxHelper($this->contactId);
+        $sandbox = new sandboxHelper($this->contactId, sandbox()->getDbType());
 
         $phpOutput = '';
         $phpVars = [];

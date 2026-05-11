@@ -5,10 +5,10 @@ class sandboxHelper
     private int $contactId;
     private sandboxVariableModel $model;
 
-    public function __construct(int $contactId)
+    public function __construct(int $contactId, ?string $dbType = null)
     {
         $this->contactId = $contactId;
-        $this->model = new sandboxVariableModel();
+        $this->model = new sandboxVariableModel($dbType);
     }
 
     public function set(string $name, mixed $value): void
