@@ -33,10 +33,15 @@ class sandboxConfig extends waAppConfig
         return $type;
     }
 
+    public function getContactId(): int
+    {
+        return (int) ($this->options['contact_id'] ?? wa()->getUser()->getId());
+    }
+
     private function getHelper(): sandboxHelper
     {
         if ($this->helper === null) {
-            $this->helper = new sandboxHelper((int) wa()->getUser()->getId());
+            $this->helper = new sandboxHelper($this->getContactId());
         }
         return $this->helper;
     }

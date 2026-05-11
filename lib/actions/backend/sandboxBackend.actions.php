@@ -334,7 +334,7 @@ class sandboxBackendActions extends waJsonActions
 
     public function getUserId(): int
     {
-        return (int) wa()->getUser()->getId();
+        return sandbox()->getContactId();
     }
 
     private function checkOwnership(?array $record): void

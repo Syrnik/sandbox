@@ -6,7 +6,7 @@ class sandboxBackendCatalogAction extends waViewAction
     {
         $this->setLayout(new sandboxDefaultLayout());
 
-        $contactId = (int) wa()->getUser()->getId();
+        $contactId = sandbox()->getContactId();
 
         $folderModel = sandbox()->getModel('Folder');
         $snippetModel = sandbox()->getModel('Snippet');

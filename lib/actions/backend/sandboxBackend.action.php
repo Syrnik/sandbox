@@ -6,7 +6,7 @@ class sandboxBackendAction extends waViewAction
     {
         $this->setLayout(new sandboxDefaultLayout());
 
-        $contactId = (int) wa()->getUser()->getId();
+        $contactId = sandbox()->getContactId();
 
         $snippetModel = sandbox()->getModel('Snippet');
         $recentSnippets = $snippetModel->getRecent($contactId);

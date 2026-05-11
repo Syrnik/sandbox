@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] — 2026-05-11
 
 ### Added
-- Поддержка кастомного подключения к базе данных. Создайте `wa-config/apps/sandbox/config.php`
+- Поддержка кастомного подключения к базе данных и фиксации `contact_id`. Создайте `wa-config/apps/sandbox/config.php`
   с ключом `db_connection`, указывающим на именованное подключение из `wa-config/db.php`.
   При отсутствии конфига или несуществующем ключе используется подключение `default`.
 - `sandboxConfig::getModel(string $name)` — фабрика моделей, гарантирующая использование
