@@ -3,12 +3,12 @@
 class sandboxHelper
 {
     private int $contactId;
-    private sandboxVariableModel $model;
+    private waModel $model;
 
-    public function __construct(int $contactId, ?string $dbType = null)
+    public function __construct(int $contactId)
     {
         $this->contactId = $contactId;
-        $this->model = new sandboxVariableModel($dbType);
+        $this->model = sandbox()->getModel('Variable');
     }
 
     public function set(string $name, mixed $value): void

@@ -24,7 +24,7 @@ class sandboxExecutor
             $envVars = $envModel->getVariables($environmentId);
         }
 
-        $sandbox = new sandboxHelper($this->contactId, sandbox()->getDbType());
+        $sandbox = new sandboxHelper($this->contactId);
 
         $phpOutput = '';
         $phpVars = [];
