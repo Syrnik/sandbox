@@ -40,6 +40,7 @@
             this.initEditors();
             this.bindEvents();
             this.#initAutoSave();
+            this.#renderRecentDropdown();
 
             const urlParams = new URLSearchParams(location.search);
             const snippetId = urlParams.get('snippet_id');
@@ -187,6 +188,10 @@
                     if (!contentType.includes("application/json")) {
                         $("#result-output").html(responseText);
                         $("#result-errors").hide().html("");
+                        if (this.currentSnippetId && this.currentSnippetName) {
+                            this.#saveRecentRun(this.currentSnippetId, this.currentSnippetName);
+                            this.#renderRecentDropdown();
+                        }
                         return;
                     }
                     const { status, data: result } = JSON.parse(responseText);
@@ -199,6 +204,10 @@
                     }
                     if (result.execution_time) {
                         $("#execution-time").text(`${result.execution_time}s`);
+                    }
+                    if (this.currentSnippetId && this.currentSnippetName) {
+                        this.#saveRecentRun(this.currentSnippetId, this.currentSnippetName);
+                        this.#renderRecentDropdown();
                     }
                 },
                 complete: () => {
@@ -314,6 +323,8 @@
                                 this.currentSnippetId = parseInt(snippet.id);
                                 this.currentFolderId  = snippet.folder_id ? parseInt(snippet.folder_id) : null;
                                 this.#updateMeta(newName, newDesc, newShared);
+                                this.#saveRecentRun(this.currentSnippetId, newName);
+                                this.#renderRecentDropdown();
                                 this.saveToLocalStorage();
                                 $wrapper.trigger("dialog-close");
                                 SandboxToast.show(this.l10n.saved);
@@ -431,6 +442,31 @@
                 document.documentElement,
                 { attributes: true, attributeFilter: ["data-theme"] }
             );
+        }
+
+        #loadRecentRuns() {
+            try {
+                return JSON.parse(localStorage.getItem('sandbox_recent_runs') || '[]');
+            } catch {
+                return [];
+            }
+        }
+
+        #saveRecentRun(id, name) {
+            const runs = this.#loadRecentRuns().filter(r => r.id !== id);
+            runs.unshift({ id, name });
+            try {
+                localStorage.setItem('sandbox_recent_runs', JSON.stringify(runs.slice(0, 10)));
+            } catch {}
+        }
+
+        #renderRecentDropdown() {
+            const runs = this.#loadRecentRuns();
+            if (!runs.length) return;
+            const $select = $("#recent-snippets");
+            const placeholder = $select.find("option:first").clone();
+            $select.empty().append(placeholder);
+            runs.forEach(r => $select.append($('<option>', { value: r.id, text: r.name })));
         }
 
         #initAutoSave() {
