@@ -1,35 +1,38 @@
-# Sandbox
+> [Русский / Russian](README.ru.md)
 
-Приложение для Webasyst Framework — интерактивная «песочница» для разработки и отладки PHP и Smarty-кода прямо в бэкенде.
+# Sandbox for Webasyst
+
+An interactive sandbox for developing and debugging PHP and Smarty code directly
+in the Webasyst backend.
 
 [![PHP Compatibility](https://github.com/Syrnik/sandbox/actions/workflows/main.yml/badge.svg)](https://github.com/Syrnik/sandbox/actions/workflows/main.yml)
 
-## Возможности
+## Features
 
-- Редактор PHP-кода с подсветкой синтаксиса (ACE editor)
-- Редактор Smarty-шаблонов с шпаргалкой по доступным переменным
-- Окружения — именованные наборы переменных, которые инжектируются при выполнении
-- Каталог сниппетов с папками, общим доступом и быстрым поиском
-- Персональные переменные пользователя, доступные между запусками
+- PHP code editor with syntax highlighting (ACE editor)
+- Smarty template editor with a cheat sheet of available variables
+- Environments — named sets of variables injected at execution time
+- Snippet library with folders, shared access, and quick search
+- Personal user variables, persistent between runs
 
 ---
 
 ## PHP API — `sandboxHelper`
 
-Хелпер для работы с персональными переменными пользователя из PHP-кода сниппетов.
+A helper for working with personal user variables from PHP snippet code.
 
 ```php
 $helper = new sandboxHelper($contactId);
 ```
 
-| Метод | Описание |
-|-------|----------|
-| `set(string $name, mixed $value): void` | Сохранить переменную. Нестроковые значения сериализуются автоматически |
-| `get(string $name, mixed $default = null): mixed` | Получить переменную. Возвращает `$default`, если не найдена |
-| `delete(string $name): void` | Удалить переменную |
-| `getAll(): array` | Получить все переменные пользователя |
+| Method | Description |
+|--------|-------------|
+| `set(string $name, mixed $value): void` | Save a variable. Non-string values are serialized automatically |
+| `get(string $name, mixed $default = null): mixed` | Get a variable. Returns `$default` if not found |
+| `delete(string $name): void` | Delete a variable |
+| `getAll(): array` | Get all user variables |
 
-### Пример (PHP-редактор)
+### Example (PHP editor)
 
 ```php
 $helper = new sandboxHelper(wa()->getUser()->getId());
@@ -49,7 +52,8 @@ $helper->delete('counter');
 
 ## PHP API — `sandboxConfig` / `sandbox()`
 
-Глобальная функция `sandbox()` возвращает объект `sandboxConfig` — тонкую обёртку над `sandboxHelper`, привязанную к текущему авторизованному пользователю.
+The global `sandbox()` function returns a `sandboxConfig` object — a thin wrapper
+around `sandboxHelper`, bound to the currently authenticated user.
 
 ```php
 sandbox()->setVar('key', $value);
@@ -58,43 +62,44 @@ sandbox()->deleteVar('key');
 $all = sandbox()->getAllVars();
 ```
 
-| Метод | Описание |
-|-------|----------|
-| `setVar(string $name, mixed $value): void` | Сохранить переменную текущего пользователя |
-| `getVar(string $name, mixed $default = null): mixed` | Получить переменную текущего пользователя |
-| `deleteVar(string $name): void` | Удалить переменную текущего пользователя |
-| `getAllVars(): array` | Получить все переменные текущего пользователя |
+| Method | Description |
+|--------|-------------|
+| `setVar(string $name, mixed $value): void` | Save a variable for the current user |
+| `getVar(string $name, mixed $default = null): mixed` | Get a variable for the current user |
+| `deleteVar(string $name): void` | Delete a variable for the current user |
+| `getAllVars(): array` | Get all variables for the current user |
 
-### Пример (PHP-редактор)
+### Example (PHP editor)
 
 ```php
-// Накопительный счётчик запусков
+// Cumulative run counter
 $count = sandbox()->getVar('runs', 0) + 1;
 sandbox()->setVar('runs', $count);
-echo "Запуск #$count";
+echo "Run #$count";
 ```
 
 ---
 
 ## Smarty API — `$wa->sandbox`
 
-`sandboxViewHelper` предоставляет те же методы в шаблонах Smarty через стандартный механизм `waAppViewHelper`. Доступен как `$wa->sandbox`.
+`sandboxViewHelper` exposes the same methods in Smarty templates via the standard
+`waAppViewHelper` mechanism. Available as `$wa->sandbox`.
 
-| Выражение | Описание |
-|-----------|----------|
-| `{$wa->sandbox->getVar('name')}` | Вывести переменную текущего пользователя |
-| `{$wa->sandbox->getVar('name', 'default')}` | Вывести переменную с fallback-значением |
-| `{$wa->sandbox->getAllVars()}` | Получить массив всех переменных |
-| `{$wa->sandbox->setVar('name', $value)}` | Сохранить переменную |
-| `{$wa->sandbox->deleteVar('name')}` | Удалить переменную |
+| Expression | Description |
+|-----------|-------------|
+| `{$wa->sandbox->getVar('name')}` | Output a variable for the current user |
+| `{$wa->sandbox->getVar('name', 'default')}` | Output a variable with a fallback value |
+| `{$wa->sandbox->getAllVars()}` | Get an array of all variables |
+| `{$wa->sandbox->setVar('name', $value)}` | Save a variable |
+| `{$wa->sandbox->deleteVar('name')}` | Delete a variable |
 
-### Пример (Smarty-редактор)
+### Example (Smarty editor)
 
 ```smarty
-{* Прочитать переменную, установленную из PHP *}
-<p>Последнее значение: {$wa->sandbox->getVar('last_value', '—')}</p>
+{* Read a variable set from PHP *}
+<p>Last value: {$wa->sandbox->getVar('last_value', '—')}</p>
 
-{* Перебрать все сохранённые переменные *}
+{* Iterate over all saved variables *}
 {foreach $wa->sandbox->getAllVars() as $var}
     <b>{$var.name}</b>: {$var.value}<br>
 {/foreach}
@@ -102,36 +107,43 @@ echo "Запуск #$count";
 
 ---
 
-## Окружения
+## Environments
 
-Окружение — именованный набор переменных (ключ → значение). При выполнении переменные инжектируются напрямую через `extract()` — как обычные PHP-переменные и Smarty-переменные. Удобно для параметризации сниппетов без изменения кода.
+An environment is a named set of variables (key → value). At execution time,
+variables are injected directly via `extract()` — as plain PHP and Smarty variables.
+This makes it easy to parameterize snippets without changing the code.
 
 ```php
-// Если выбрано окружение с переменными host=db.local, port=3306
+// If the selected environment has variables host=db.local, port=3306
 echo $host; // db.local
 echo $port; // 3306
 ```
 
-В Smarty-шаблоне:
+In a Smarty template:
 
 ```smarty
 {$host} {* db.local *}
 {$port} {* 3306 *}
 ```
 
-> Значения переменных окружения — **всегда строки**. UI не поддерживает массивы, объекты и `null`: пустое поле сохраняется как пустая строка `""`. Если нужен массив, храните JSON-строку и парсите вручную: `$data = json_decode($json_var, true)`.
+> Environment variable values are **always strings**. The UI does not support arrays,
+> objects, or `null`: an empty field is saved as an empty string `""`. If you need an
+> array, store a JSON string and parse it manually: `$data = json_decode($json_var, true)`.
 
-> При конфликте имён с внутренними переменными исполнителя переменная окружения получает префикс `env_` (например, `$env_code`).
+> If a variable name conflicts with an internal executor variable, the environment
+> variable receives an `env_` prefix (e.g., `$env_code`).
 
-Общие окружения видны всем пользователям, личные — только владельцу.
+Shared environments are visible to all users; personal ones are visible only to the owner.
 
 ---
 
-## Конфигурация подключения к базе данных
+## Database Connection Configuration
 
-Приложение поддерживает работу с отдельным подключением к БД, отличным от `'default'`. Это полезно, когда один проект используется в нескольких конфигурациях (локальная и общая dev-база), а данные сниппетов должны всегда храниться в конкретной БД.
+The app supports using a separate database connection other than `'default'`. This is
+useful when one project is used across multiple configurations (local and shared dev
+database), and snippet data must always be stored in a specific database.
 
-### 1. Добавить именованное подключение в `wa-config/db.php`
+### 1. Add a named connection to `wa-config/db.php`
 
 ```php
 return [
@@ -148,26 +160,27 @@ return [
 ];
 ```
 
-### 2. Создать `wa-config/apps/sandbox/config.php`
+### 2. Create `wa-config/apps/sandbox/config.php`
 
 ```php
 <?php
 return [
     'db_connection' => 'sandbox_local',
-    'contact_id'    => 1,   // опционально — см. ниже
+    'contact_id'    => 1,   // optional — see below
 ];
 ```
 
-Этот файл читается фреймворком автоматически. Если файл отсутствует или указанный ключ не найден в `db.php`, приложение использует подключение `'default'`.
+This file is read automatically by the framework. If the file is missing or the
+specified key is not found in `db.php`, the app falls back to the `'default'` connection.
 
-### Фиксация contact_id
+### Fixing contact_id
 
-На разных Webasyst-установках ID одного и того же пользователя может различаться.
-Личные сниппеты (не общие) фильтруются по `contact_id`, поэтому без фиксации они
-могут быть недоступны при переключении между установками.
+The ID of the same user can differ across Webasyst installations. Personal snippets
+(non-shared) are filtered by `contact_id`, so without a fixed ID they may be
+inaccessible when switching between installations.
 
-Добавьте ключ `contact_id` с нужным значением — приложение будет использовать его
-вместо ID текущего авторизованного пользователя:
+Add the `contact_id` key with the required value — the app will use it instead of
+the currently authenticated user's ID:
 
 ```php
 return [
@@ -176,10 +189,10 @@ return [
 ];
 ```
 
-Если ключ не задан, используется `wa()->getUser()->getId()` (поведение по умолчанию).
+If the key is not set, `wa()->getUser()->getId()` is used (default behavior).
 
-> **Важно:** При подключении к новой базе данных таблицы приложения в ней отсутствуют.
-> Создать их можно двумя способами:
-> - **Через Webasyst:** зайти в раздел «Установщик» → переустановить приложение Sandbox
->   (приложение использует стандартный механизм миграций через `lib/config/db.php`).
-> - **Вручную:** скопировать все таблицы с префиксом `sandbox_` из исходной базы данных.
+> **Important:** When connecting to a new database, the app's tables will not exist
+> there. You can create them in two ways:
+> - **Via Webasyst:** go to the Installer section → reinstall the Sandbox app
+>   (the app uses the standard migration mechanism via `lib/config/db.php`).
+> - **Manually:** copy all tables with the `sandbox_` prefix from the original database.
