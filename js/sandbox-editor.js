@@ -2,6 +2,7 @@
     "use strict";
 
     const STORAGE_KEY = "sandbox_editor_state";
+    const ENVIRONMENT_KEY = "sandbox_environment_id";
 
     class SandboxEditor {
         constructor(options) {
@@ -53,6 +54,8 @@
             } else {
                 this.restoreFromLocalStorage();
             }
+
+            this.#restoreEnvironment();
         }
 
         initEditors() {
@@ -111,6 +114,8 @@
                 if (id) this.loadSnippet(id);
                 $(e.currentTarget).val("");
             });
+
+            $("#environment-select").on("change", () => this.#saveEnvironment());
         }
 
         saveToLocalStorage() {
@@ -467,6 +472,23 @@
             const placeholder = $select.find("option:first").clone();
             $select.empty().append(placeholder);
             runs.forEach(r => $select.append($('<option>', { value: r.id, text: r.name })));
+        }
+
+        #saveEnvironment() {
+            try {
+                localStorage.setItem(ENVIRONMENT_KEY, $("#environment-select").val() ?? "");
+            } catch {}
+        }
+
+        #restoreEnvironment() {
+            try {
+                const envId = localStorage.getItem(ENVIRONMENT_KEY);
+                if (!envId) return;
+                const $select = $("#environment-select");
+                if ($select.find(`option[value="${envId}"]`).length) {
+                    $select.val(envId);
+                }
+            } catch {}
         }
 
         #initAutoSave() {
