@@ -8,45 +8,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] — 2026-05-13
 
 ### Added
-- Недавние сниппеты: боковая панель показывает запущенные и сохранённые сниппеты.
-- Сохранение выбранного окружения в localStorage между сессиями.
-- Панель вывода результата: компактный шрифт (class `small`, `line-height: 1.2`).
+- Recent snippets: the sidebar shows recently run and saved snippets.
+- Selected environment is now persisted in localStorage between sessions.
+- Output panel: compact font (class `small`, `line-height: 1.2`).
 
 ## [1.1.0] — 2026-05-11
 
 ### Added
-- Поддержка кастомного подключения к базе данных и фиксации `contact_id`. Создайте `wa-config/apps/sandbox/config.php`
-  с ключом `db_connection`, указывающим на именованное подключение из `wa-config/db.php`.
-  При отсутствии конфига или несуществующем ключе используется подключение `default`.
-- `sandboxConfig::getModel(string $name)` — фабрика моделей, гарантирующая использование
-  сконфигурированного подключения к БД.
-- Защита от вызова моделей приложения из контекста Smarty-шаблона.
+- Support for a custom database connection and fixed `contact_id`. Create
+  `wa-config/apps/sandbox/config.php` with a `db_connection` key pointing to a named
+  connection from `wa-config/db.php`. Falls back to the `default` connection if the
+  config file is absent or the key is not found.
+- `sandboxConfig::getModel(string $name)` — a model factory that guarantees the
+  configured database connection is used.
+- Protection against calling app models from within a Smarty template context.
 
 ## [1.0.3] — 2026-04-16
 
 ### Fixed
-- Перенос длинных слов в описании карточки каталога.
-- Кнопка «Создать сниппет» открывала редактор с содержимым последнего сниппета вместо пустого.
-- Подсветка синтаксиса PHP-кода без явного тега `<?php`.
+- Long words now wrap correctly in snippet card descriptions.
+- "Create snippet" button was opening the editor with the last snippet's content
+  instead of an empty editor.
+- Syntax highlighting for PHP code without an explicit `<?php` tag.
 
 ## [1.0.2] — 2026-04-14
 
 ### Fixed
-- Вывод `wa_dump()` отображался в модалке ajax error вместо панели результата.
+- `wa_dump()` output was shown in the ajax error modal instead of the result panel.
 
 ## [1.0.1] — 2026-04-13
 
 ### Fixed
-- Smarty-шаблон не выполнялся, если чекбокс «Выполнять Smarty» был выключен.
-- Колонки редактора и результата теперь всегда одинаковой ширины.
+- Smarty template was not executed when the "Execute Smarty" checkbox was unchecked.
+- Editor and result columns are now always equal width.
 
 ## [1.0.0] — 2026-04-12
 
 ### Added
-- PHP и Smarty редакторы с подсветкой синтаксиса (ACE editor).
-- Окружения — именованные наборы переменных, инжектируемых при выполнении.
-- Каталог сниппетов с папками, вложенностью, поиском и общим доступом.
-- Экспорт и импорт сниппетов, папок и окружений в JSON.
-- Персональные переменные пользователя (`sandboxHelper`, `sandboxConfig`, `$wa->sandbox`).
-- Дублирование и перемещение сниппетов между папками.
-- Массовое управление доступом (поделиться / закрыть для папок и сниппетов).
+- PHP and Smarty editors with syntax highlighting (ACE editor).
+- Environments — named sets of variables injected at execution time.
+- Snippet library with folders, nesting, search, and shared access.
+- Export and import of snippets, folders, and environments to JSON.
+- Personal user variables (`sandboxHelper`, `sandboxConfig`, `$wa->sandbox`).
+- Snippet duplication and moving between folders.
+- Bulk access management (share / restrict for folders and snippets).
