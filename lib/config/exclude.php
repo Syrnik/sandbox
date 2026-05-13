@@ -70,4 +70,10 @@ return array(
     'AGENTS.md',
     '*/AGENTS.md',
     'compress-app.php',
+    'CODE_OF_CONDUCT.md',
+    '*/CODE_OF_CONDUCT.md',
+    'CODE_OF_CONDUCT.ru.md',
+    '*/CODE_OF_CONDUCT.ru.md',
+    'CLAUDE.md',
+    '*/CLAUDE.md',
 );
