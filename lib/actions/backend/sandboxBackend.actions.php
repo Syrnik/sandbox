@@ -2,6 +2,15 @@
 
 class sandboxBackendActions extends waJsonActions
 {
+    protected function execute($action)
+    {
+        if (sandbox()->isCloud()) {
+            $this->errors = _w('Приложение «Sandbox» недоступно в Облаке Webasyst.');
+            return;
+        }
+        parent::execute($action);
+    }
+
     // ========================
     // СНИППЕТЫ
     // ========================

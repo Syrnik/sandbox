@@ -3,23 +3,36 @@
 class sandboxHelper
 {
     private int $contactId;
-    private waModel $model;
+    private ?waModel $model = null;
 
     public function __construct(int $contactId)
     {
         $this->contactId = $contactId;
-        $this->model = sandbox()->getModel('Variable');
+    }
+
+    private function getModel(): waModel
+    {
+        if ($this->model === null) {
+            $this->model = sandbox()->getModel('Variable');
+        }
+        return $this->model;
     }
 
     public function set(string $name, mixed $value): void
     {
+        if (sandbox()->isCloud()) {
+            return;
+        }
         $serialized = is_string($value) ? $value : serialize($value);
-        $this->model->setValue($this->contactId, $name, $serialized);
+        $this->getModel()->setValue($this->contactId, $name, $serialized);
     }
 
     public function get(string $name, mixed $default = null): mixed
     {
-        $value = $this->model->getValue($this->contactId, $name);
+        if (sandbox()->isCloud()) {
+            return $default;
+        }
+        $value = $this->getModel()->getValue($this->contactId, $name);
         if ($value === null) {
             return $default;
         }
@@ -29,11 +42,17 @@ class sandboxHelper
 
     public function delete(string $name): void
     {
-        $this->model->deleteByName($this->contactId, $name);
+        if (sandbox()->isCloud()) {
+            return;
+        }
+        $this->getModel()->deleteByName($this->contactId, $name);
     }
 
     public function getAll(): array
     {
-        return $this->model->getAllByContact($this->contactId);
+        if (sandbox()->isCloud()) {
+            return [];
+        }
+        return $this->getModel()->getAllByContact($this->contactId);
     }
 }

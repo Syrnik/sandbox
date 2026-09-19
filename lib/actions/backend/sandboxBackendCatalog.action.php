@@ -4,6 +4,11 @@ class sandboxBackendCatalogAction extends waViewAction
 {
     public function execute(): void
     {
+        if (sandbox()->isCloud()) {
+            $this->redirect(wa()->getAppUrl('sandbox'));
+            return;
+        }
+
         $this->setLayout(new sandboxDefaultLayout());
 
         $contactId = sandbox()->getContactId();

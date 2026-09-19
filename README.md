@@ -13,7 +13,9 @@ in the Webasyst backend.
 - Smarty template editor with a cheat sheet of available variables
 - Environments — named sets of variables injected at execution time
 - Snippet library with folders, shared access, and quick search
+- Recent snippets — quick access to recently run and saved snippets in the sidebar
 - Personal user variables, persistent between runs
+- Selected environment is persisted in localStorage between sessions
 
 ---
 
@@ -48,6 +50,10 @@ print_r($helper->getAll());
 $helper->delete('counter');
 ```
 
+> In Webasyst Cloud (if the `cloud` app is installed in the system), Sandbox is disabled:
+> `set()`/`delete()` become no-ops, `get()` always returns `$default`, and `getAll()` returns
+> an empty array. No database access is performed.
+
 ---
 
 ## PHP API — `sandboxConfig` / `sandbox()`
@@ -78,6 +84,9 @@ sandbox()->setVar('runs', $count);
 echo "Run #$count";
 ```
 
+> Same degradation rules as `sandboxHelper` apply in Webasyst Cloud (see above).
+> `sandbox()->isCloud(): bool` is the public method for checking this mode.
+
 ---
 
 ## Smarty API — `$wa->sandbox`
@@ -92,6 +101,10 @@ echo "Run #$count";
 | `{$wa->sandbox->getAllVars()}` | Get an array of all variables |
 | `{$wa->sandbox->setVar('name', $value)}` | Save a variable |
 | `{$wa->sandbox->deleteVar('name')}` | Delete a variable |
+
+> Works from templates in **other** apps too, as long as Sandbox is installed. In Webasyst
+> Cloud (or if the app is unavailable), `getVar()` returns `null`/the fallback, `getAllVars()`
+> returns an empty array, and `setVar()`/`deleteVar()` do nothing.
 
 ### Example (Smarty editor)
 

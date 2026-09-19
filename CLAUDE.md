@@ -16,8 +16,8 @@ $model = new sandboxSnippetModel();
 
 This ensures the database connection configured in `wa-config/apps/sandbox/config.php` (`db_connection` key) is used. If the key is absent or not found in `wa-config/db.php`, falls back to `'default'`.
 
-**Exception:** `sandboxHelper` receives the DB type via its constructor `$dbType` parameter (passed from `sandboxConfig::getDbType()`). When instantiating `sandboxHelper` outside of `sandboxConfig` (e.g., in `sandboxExecutor`), pass `sandbox()->getDbType()` explicitly:
+**Note:** `sandboxHelper`'s constructor takes a single `$contactId` parameter — it resolves the DB connection lazily and internally via `sandbox()->getModel('Variable')` on first use, not through a constructor argument:
 
 ```php
-$helper = new sandboxHelper($contactId, sandbox()->getDbType());
+$helper = new sandboxHelper($contactId);
 ```
