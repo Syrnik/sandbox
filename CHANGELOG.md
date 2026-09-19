@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   code execution) are blocked, and the `sandboxHelper` / `sandbox()` / `$wa->sandbox`
   helpers silently degrade (no-op / `null` / empty array) instead of touching the database.
 
+### Fixed
+- Added missing `.htaccess` (deny direct web access) to `lib/`, `locale/` and `templates/`,
+  required for marketplace review.
+
 ## [1.2.0] — 2026-05-13
 
 ### Added
