@@ -5,6 +5,22 @@ declare(strict_types=1);
 class sandboxConfig extends waAppConfig
 {
     private ?sandboxHelper $helper = null;
+    private ?bool $is_cloud = null;
+
+    /**
+     * Whether the app must behave as disabled (Webasyst Cloud environment).
+     *
+     * @return bool
+     * @throws waException
+     */
+    public function isCloud(): bool
+    {
+        if ($this->is_cloud === null) {
+            // Дешёвый локальный флаг первым, чтобы не дёргать getApps() без необходимости.
+            $this->is_cloud = !empty($this->getOption('force_cloud')) || wa()->appExists('cloud');
+        }
+        return $this->is_cloud;
+    }
 
     /**
      * @param string $name
@@ -13,6 +29,9 @@ class sandboxConfig extends waAppConfig
      */
     public function getModel(string $name): waModel
     {
+        if ($this->isCloud()) {
+            throw new waException('Sandbox is not available in Webasyst Cloud');
+        }
         if(waConfig::get('is_template')) {
             throw new waException('You can not use sandbox models in template');
         }
@@ -48,6 +67,9 @@ class sandboxConfig extends waAppConfig
 
     public function setVar(string $name, mixed $value): void
     {
+        if ($this->isCloud()) {
+            return;
+        }
         $old_is_template = waConfig::get('is_template');
         waConfig::set('is_template', null);
         $this->getHelper()->set($name, $value);
@@ -56,6 +78,9 @@ class sandboxConfig extends waAppConfig
 
     public function getVar(string $name, mixed $default = null): mixed
     {
+        if ($this->isCloud()) {
+            return $default;
+        }
         $old_is_template = waConfig::get('is_template');
         waConfig::set('is_template', null);
         $result = $this->getHelper()->get($name, $default);
@@ -65,6 +90,9 @@ class sandboxConfig extends waAppConfig
 
     public function deleteVar(string $name): void
     {
+        if ($this->isCloud()) {
+            return;
+        }
         $old_is_template = waConfig::get('is_template');
         waConfig::set('is_template', null);
         $this->getHelper()->delete($name);
@@ -73,6 +101,9 @@ class sandboxConfig extends waAppConfig
 
     public function getAllVars(): array
     {
+        if ($this->isCloud()) {
+            return [];
+        }
         $old_is_template = waConfig::get('is_template');
         waConfig::set('is_template', null);
         $result = $this->getHelper()->getAll();

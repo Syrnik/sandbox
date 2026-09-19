@@ -6,6 +6,11 @@ class sandboxBackendAction extends waViewAction
     {
         $this->setLayout(new sandboxDefaultLayout());
 
+        if (sandbox()->isCloud()) {
+            $this->setTemplate('backend/BackendCloud', true);
+            return;
+        }
+
         $contactId = sandbox()->getContactId();
 
         $snippetModel = sandbox()->getModel('Snippet');

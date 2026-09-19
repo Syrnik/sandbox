@@ -47,6 +47,10 @@ print_r($helper->getAll());
 $helper->delete('counter');
 ```
 
+> В Облаке Webasyst (если в системе установлено приложение `cloud`) приложение Sandbox
+> отключено: `set()`/`delete()` становятся no-op, `get()` всегда возвращает `$default`,
+> `getAll()` — пустой массив. Обращения к БД не выполняются.
+
 ---
 
 ## PHP API — `sandboxConfig` / `sandbox()`
@@ -76,6 +80,9 @@ sandbox()->setVar('runs', $count);
 echo "Запуск #$count";
 ```
 
+> В Облаке Webasyst те же правила деградации, что и у `sandboxHelper` (см. выше).
+> `sandbox()->isCloud(): bool` — публичный метод для проверки этого режима.
+
 ---
 
 ## Smarty API — `$wa->sandbox`
@@ -89,6 +96,10 @@ echo "Запуск #$count";
 | `{$wa->sandbox->getAllVars()}` | Получить массив всех переменных |
 | `{$wa->sandbox->setVar('name', $value)}` | Сохранить переменную |
 | `{$wa->sandbox->deleteVar('name')}` | Удалить переменную |
+
+> Работает и из шаблонов **других** приложений — если Sandbox установлен. В Облаке Webasyst
+> (или если приложение недоступно) `getVar()` возвращает `null`/fallback, `getAllVars()` —
+> пустой массив, `setVar()`/`deleteVar()` ничего не делают.
 
 ### Пример (Smarty-редактор)
 

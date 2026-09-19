@@ -14,6 +14,14 @@ class sandboxExecutor
      */
     public function execute(string $codePHP, string $codeSmarty, int $environmentId = 0): array
     {
+        if (sandbox()->isCloud()) {
+            return [
+                'output'         => '',
+                'error'          => _w('Приложение недоступно в Облаке Webasyst.'),
+                'execution_time' => 0.0,
+            ];
+        }
+
         $startTime = microtime(true);
         $output = '';
         $error = null;
