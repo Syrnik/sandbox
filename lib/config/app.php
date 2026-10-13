@@ -1,7 +1,7 @@
 <?php
 return [
     'name'    => /*_w*/('Sandbox'),
-    'icon'    => 'img/sandbox.svg',
+    'icon'    => 'img/sandbox-green.svg',
     'version' => '1.3.0',
     'vendor'  => '670917',
     'csrf'    => true,
