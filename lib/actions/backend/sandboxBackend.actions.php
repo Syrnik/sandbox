@@ -5,7 +5,7 @@ class sandboxBackendActions extends waJsonActions
     protected function execute($action)
     {
         if (sandbox()->isCloud()) {
-            $this->errors = _w('Приложение «Sandbox» недоступно в Облаке Webasyst.');
+            $this->errors = _w('Sandbox is not available in Webasyst Cloud');
             return;
         }
         parent::execute($action);
@@ -21,7 +21,7 @@ class sandboxBackendActions extends waJsonActions
         $model = sandbox()->getModel('Snippet');
         $snippet = $model->getById($id);
         if (!$snippet) {
-            $this->errors = 'Сниппет не найден';
+            $this->errors = _w('Snippet not found');
             return;
         }
         $this->checkAccess($snippet);
@@ -45,16 +45,16 @@ class sandboxBackendActions extends waJsonActions
     {
         $id = waRequest::post('id', 0, 'int');
         $data = [
-            'name'        => waRequest::post('name', '', 'string_trim'),
+            'name' => waRequest::post('name', '', 'string_trim'),
             'description' => waRequest::post('description', '', 'string_trim'),
-            'code_php'    => waRequest::post('code_php'),
+            'code_php' => waRequest::post('code_php'),
             'code_smarty' => waRequest::post('code_smarty'),
-            'is_shared'   => waRequest::post('is_shared', 0, 'int'),
-            'folder_id'   => waRequest::post('folder_id', 0, 'int') ?: null,
+            'is_shared' => waRequest::post('is_shared', 0, 'int'),
+            'folder_id' => waRequest::post('folder_id', 0, 'int') ?: null,
         ];
 
         if (empty($data['name'])) {
-            $this->errors = 'Название обязательно';
+            $this->errors = _w('Name is required');
             return;
         }
 
@@ -95,13 +95,13 @@ class sandboxBackendActions extends waJsonActions
         $snippet = $model->getById($id);
         $this->checkAccess($snippet);
         $newId = $model->add([
-            'contact_id'  => $this->getUserId(),
-            'name'        => $snippet['name'] . ' (копия)',
+            'contact_id' => $this->getUserId(),
+            'name' => $snippet['name'] . ' ' . _w('(copy)'),
             'description' => $snippet['description'] ?? '',
-            'code_php'    => $snippet['code_php'] ?? '',
+            'code_php' => $snippet['code_php'] ?? '',
             'code_smarty' => $snippet['code_smarty'] ?? '',
-            'is_shared'   => 0,
-            'folder_id'   => null,
+            'is_shared' => 0,
+            'folder_id' => null,
         ]);
         $this->response = $model->getById($newId);
     }
@@ -109,11 +109,11 @@ class sandboxBackendActions extends waJsonActions
     public function bulkShareAction(): void
     {
         $snippetIds = waRequest::post('snippet_ids', [], 'array_int');
-        $folderIds  = waRequest::post('folder_ids', [], 'array_int');
-        $isShared   = waRequest::post('is_shared', 0, 'int');
+        $folderIds = waRequest::post('folder_ids', [], 'array_int');
+        $isShared = waRequest::post('is_shared', 0, 'int');
 
         $snippetModel = sandbox()->getModel('Snippet');
-        $folderModel  = sandbox()->getModel('Folder');
+        $folderModel = sandbox()->getModel('Folder');
 
         foreach ($snippetIds as $id) {
             $snippet = $snippetModel->getById($id);
@@ -169,14 +169,14 @@ class sandboxBackendActions extends waJsonActions
         $id = waRequest::post('id', 0, 'int');
         $parentId = waRequest::post('parent_id', 0, 'int');
         $data = [
-            'name'        => waRequest::post('name', '', 'string_trim'),
+            'name' => waRequest::post('name', '', 'string_trim'),
             'description' => waRequest::post('description', '', 'string_trim'),
-            'parent_id'   => $parentId ?: null,
-            'is_shared'   => waRequest::post('is_shared', 0, 'int'),
+            'parent_id' => $parentId ?: null,
+            'is_shared' => waRequest::post('is_shared', 0, 'int'),
         ];
 
         if (empty($data['name'])) {
-            $this->errors = 'Название обязательно';
+            $this->errors = _w('Name is required');
             return;
         }
 
@@ -225,7 +225,7 @@ class sandboxBackendActions extends waJsonActions
         $model = sandbox()->getModel('Environment');
         $env = $model->getById($id);
         if (!$env) {
-            $this->errors = 'Окружение не найдено';
+            $this->errors = _w('Environment not found');
             return;
         }
         $this->checkAccess($env);
@@ -238,26 +238,26 @@ class sandboxBackendActions extends waJsonActions
     {
         $id = waRequest::post('id', 0, 'int');
         $data = [
-            'name'      => waRequest::post('name', '', 'string_trim'),
+            'name' => waRequest::post('name', '', 'string_trim'),
             'is_shared' => waRequest::post('is_shared', 0, 'int'),
             'variables' => waRequest::post('variables', '{}', 'string'),
         ];
 
         if (empty($data['name'])) {
-            $this->errors = 'Укажите название окружения';
+            $this->errors = _w('Enter an environment name');
             return;
         }
 
         $decoded = json_decode($data['variables'], true);
         if ($decoded === null && $data['variables'] !== '{}') {
-            $this->errors = 'Невалидный JSON в переменных';
+            $this->errors = _w('Invalid JSON in variables');
             return;
         }
         $decoded = $decoded ?: [];
 
         foreach (array_keys($decoded) as $key) {
             if (trim($key) === '') {
-                $this->errors = 'Укажите названия всех переменных';
+                $this->errors = _w('Enter names for all variables');
                 return;
             }
         }
@@ -297,15 +297,15 @@ class sandboxBackendActions extends waJsonActions
         $id = waRequest::get('id', 0, 'int');
         $contactId = $this->getUserId();
 
-        $result = match($type) {
-            'snippet'     => $this->exportSnippet($id, $contactId),
-            'folder'      => $this->exportFolder($id, $contactId),
+        $result = match ($type) {
+            'snippet' => $this->exportSnippet($id, $contactId),
+            'folder' => $this->exportFolder($id, $contactId),
             'environment' => $this->exportEnvironment($id, $contactId),
-            default       => null,
+            default => null,
         };
 
         if ($result === null) {
-            $this->errors = 'Неверный тип экспорта';
+            $this->errors = _w('Invalid export type');
             return;
         }
 
@@ -317,21 +317,21 @@ class sandboxBackendActions extends waJsonActions
         $json = waRequest::post('data', '', 'string');
         $import = json_decode($json, true);
         if (!$import || !isset($import['type'])) {
-            $this->errors = 'Неверный формат импорта';
+            $this->errors = _w('Invalid import format');
             return;
         }
 
         $contactId = $this->getUserId();
 
-        $result = match($import['type']) {
-            'snippet'     => $this->importSnippet($import, $contactId),
-            'folder'      => $this->importFolder($import, $contactId),
+        $result = match ($import['type']) {
+            'snippet' => $this->importSnippet($import, $contactId),
+            'folder' => $this->importFolder($import, $contactId),
             'environment' => $this->importEnvironment($import, $contactId),
-            default       => null,
+            default => null,
         };
 
         if ($result === null) {
-            $this->errors = 'Неверный тип импорта';
+            $this->errors = _w('Invalid import type');
             return;
         }
         $this->response = $result;
@@ -372,7 +372,7 @@ class sandboxBackendActions extends waJsonActions
         $folder = $folderModel->getById($folderId);
         $this->checkOwnership($folder);
         $folderModel->updateByField('id', $folderId, [
-            'is_shared'       => $isShared,
+            'is_shared' => $isShared,
             'update_datetime' => date('Y-m-d H:i:s'),
         ]);
 
@@ -408,11 +408,11 @@ class sandboxBackendActions extends waJsonActions
         $snippet = $model->getById($id);
         $this->checkAccess($snippet);
         return [
-            'type'        => 'snippet',
-            'version'     => '1.0',
-            'name'        => $snippet['name'],
+            'type' => 'snippet',
+            'version' => '1.0',
+            'name' => $snippet['name'],
             'description' => $snippet['description'],
-            'code_php'    => $snippet['code_php'],
+            'code_php' => $snippet['code_php'],
             'code_smarty' => $snippet['code_smarty'],
         ];
     }
@@ -424,12 +424,12 @@ class sandboxBackendActions extends waJsonActions
         $this->checkAccess($folder);
 
         return [
-            'type'        => 'folder',
-            'version'     => '1.0',
-            'name'        => $folder['name'],
+            'type' => 'folder',
+            'version' => '1.0',
+            'name' => $folder['name'],
             'description' => $folder['description'],
-            'snippets'    => $this->exportFolderContents($id),
-            'subfolders'  => $this->exportSubfolders($id),
+            'snippets' => $this->exportFolderContents($id),
+            'subfolders' => $this->exportSubfolders($id),
         ];
     }
 
@@ -438,9 +438,9 @@ class sandboxBackendActions extends waJsonActions
         $model = sandbox()->getModel('Snippet');
         $snippets = $model->getByField('folder_id', $folderId, true);
         return array_map(fn($s) => [
-            'name'        => $s['name'],
+            'name' => $s['name'],
             'description' => $s['description'],
-            'code_php'    => $s['code_php'],
+            'code_php' => $s['code_php'],
             'code_smarty' => $s['code_smarty'],
         ], $snippets);
     }
@@ -450,10 +450,10 @@ class sandboxBackendActions extends waJsonActions
         $model = sandbox()->getModel('Folder');
         $children = $model->getByField('parent_id', $parentId, true);
         return array_map(fn($f) => [
-            'name'        => $f['name'],
+            'name' => $f['name'],
             'description' => $f['description'],
-            'snippets'    => $this->exportFolderContents((int)$f['id']),
-            'subfolders'  => $this->exportSubfolders((int)$f['id']),
+            'snippets' => $this->exportFolderContents((int)$f['id']),
+            'subfolders' => $this->exportSubfolders((int)$f['id']),
         ], $children);
     }
 
@@ -463,9 +463,9 @@ class sandboxBackendActions extends waJsonActions
         $env = $model->getById($id);
         $this->checkAccess($env);
         return [
-            'type'      => 'environment',
-            'version'   => '1.0',
-            'name'      => $env['name'],
+            'type' => 'environment',
+            'version' => '1.0',
+            'name' => $env['name'],
             'variables' => json_decode($env['variables'], true) ?: [],
         ];
     }
@@ -474,12 +474,12 @@ class sandboxBackendActions extends waJsonActions
     {
         $model = sandbox()->getModel('Snippet');
         $newId = $model->add([
-            'contact_id'  => $contactId,
-            'name'        => $data['name'] ?? _w('Imported snippet'),
+            'contact_id' => $contactId,
+            'name' => $data['name'] ?? _w('Imported snippet'),
             'description' => $data['description'] ?? '',
-            'code_php'    => $data['code_php'] ?? '',
+            'code_php' => $data['code_php'] ?? '',
             'code_smarty' => $data['code_smarty'] ?? '',
-            'is_shared'   => 0,
+            'is_shared' => 0,
         ]);
         return $model->getById($newId);
     }
@@ -488,23 +488,23 @@ class sandboxBackendActions extends waJsonActions
     {
         $folderModel = sandbox()->getModel('Folder');
         $folderId = $folderModel->add([
-            'contact_id'  => $contactId,
-            'parent_id'   => $parentId,
-            'name'        => $data['name'] ?? _w('Imported folder'),
+            'contact_id' => $contactId,
+            'parent_id' => $parentId,
+            'name' => $data['name'] ?? _w('Imported folder'),
             'description' => $data['description'] ?? '',
-            'is_shared'   => 0,
+            'is_shared' => 0,
         ]);
 
         $snippetModel = sandbox()->getModel('Snippet');
         foreach (($data['snippets'] ?? []) as $sData) {
             $snippetModel->add([
-                'contact_id'  => $contactId,
-                'folder_id'   => $folderId,
-                'name'        => $sData['name'] ?? _w('Snippet'),
+                'contact_id' => $contactId,
+                'folder_id' => $folderId,
+                'name' => $sData['name'] ?? _w('Snippet'),
                 'description' => $sData['description'] ?? '',
-                'code_php'    => $sData['code_php'] ?? '',
+                'code_php' => $sData['code_php'] ?? '',
                 'code_smarty' => $sData['code_smarty'] ?? '',
-                'is_shared'   => 0,
+                'is_shared' => 0,
             ]);
         }
 
@@ -520,9 +520,9 @@ class sandboxBackendActions extends waJsonActions
         $model = sandbox()->getModel('Environment');
         $newId = $model->add([
             'contact_id' => $contactId,
-            'name'       => $data['name'] ?? _w('Imported environment'),
-            'is_shared'  => 0,
-            'variables'  => json_encode($data['variables'] ?? [], JSON_UNESCAPED_UNICODE),
+            'name' => $data['name'] ?? _w('Imported environment'),
+            'is_shared' => 0,
+            'variables' => json_encode($data['variables'] ?? [], JSON_UNESCAPED_UNICODE),
         ]);
         return $model->getById($newId);
     }

@@ -1,0 +1,280 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: sandbox\n"
+"POT-Creation-Date: 2026-10-13 15:04+0300\n"
+"PO-Revision-Date: \n"
+"Last-Translator: sandbox\n"
+"Language-Team: sandbox\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: fr_FR\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: utf-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: .\n"
+
+msgid "Private"
+msgstr ""
+
+msgid "No environment"
+msgstr ""
+
+msgid "Snippet catalog"
+msgstr ""
+
+msgid "Environments"
+msgstr ""
+
+msgid "Recent snippets"
+msgstr ""
+
+msgid "Run"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Duplicate"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Result"
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Copied!"
+msgstr ""
+
+msgid "No output"
+msgstr ""
+
+msgid "Save snippet"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Folder"
+msgstr ""
+
+msgid "— No folder —"
+msgstr ""
+
+msgid "Shared with everyone"
+msgstr ""
+
+msgid "Save as new"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Enter a snippet name"
+msgstr ""
+
+msgid "Shared"
+msgstr ""
+
+msgid "Snippet saved"
+msgstr ""
+
+msgid "Error while saving"
+msgstr ""
+
+msgid "Snippet duplicated"
+msgstr ""
+
+msgid "Editor"
+msgstr ""
+
+msgid "Create folder"
+msgstr ""
+
+msgid "Create snippet"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "Empty. Create a folder or a snippet."
+msgstr ""
+
+msgid "Selected:"
+msgstr ""
+
+msgid "Make shared"
+msgstr ""
+
+msgid "Make private"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Edit folder"
+msgstr ""
+
+msgid "Parent folder"
+msgstr ""
+
+msgid "— Root —"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Enter a name"
+msgstr ""
+
+msgid "Select snippets"
+msgstr ""
+
+msgid "Delete selected items?"
+msgstr ""
+
+msgid "Move to folder"
+msgstr ""
+
+msgid "Copy to my snippets"
+msgstr ""
+
+msgid "Open in editor"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Download JSON"
+msgstr ""
+
+msgid "Delete folder?"
+msgstr ""
+
+msgid "All nested folders and all snippets inside them will be deleted. This action cannot be undone."
+msgstr ""
+
+msgid "Import completed"
+msgstr ""
+
+msgid "Sandbox is not available in Webasyst Cloud"
+msgstr ""
+
+msgid "Sandbox executes arbitrary PHP and Smarty code, so it is disabled in the cloud. The app works only on a self-hosted server."
+msgstr ""
+
+msgid "Add environment"
+msgstr ""
+
+msgid "Environment name"
+msgstr ""
+
+msgid "Variable"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Add variable"
+msgstr ""
+
+msgid "Export"
+msgstr ""
+
+msgid "Select an environment from the list or create a new one."
+msgstr ""
+
+msgid "Enter an environment name"
+msgstr ""
+
+msgid "Enter names for all variables"
+msgstr ""
+
+msgid "Delete environment?"
+msgstr ""
+
+msgid "Environment saved"
+msgstr ""
+
+msgid "Environment imported"
+msgstr ""
+
+msgid "Sandbox"
+msgstr ""
+
+msgid "Snippet not found"
+msgstr ""
+
+msgid "Name is required"
+msgstr ""
+
+msgid "(copy)"
+msgstr ""
+
+msgid "Environment not found"
+msgstr ""
+
+msgid "Invalid JSON in variables"
+msgstr ""
+
+msgid "Invalid export type"
+msgstr ""
+
+msgid "Invalid import format"
+msgstr ""
+
+msgid "Invalid import type"
+msgstr ""
+
+msgid "Not found"
+msgstr ""
+
+msgid "Imported snippet"
+msgstr ""
+
+msgid "Imported folder"
+msgstr ""
+
+msgid "Snippet"
+msgstr ""
+
+msgid "Imported environment"
+msgstr ""
+
+msgid "You can not use sandbox models in template"
+msgstr ""
+
+msgid "Get a variable of the current user by name"
+msgstr ""
+
+msgid "Get a variable with a fallback value"
+msgstr ""
+
+msgid "Get all variables of the current user (array)"
+msgstr ""
+
+msgid "Save a variable for the current user"
+msgstr ""
+
+msgid "Delete a variable of the current user"
+msgstr ""

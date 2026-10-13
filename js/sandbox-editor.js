@@ -8,23 +8,24 @@
         constructor(options) {
             options = options || {};
             this.l10n = Object.assign({
-                execute_label:      'Выполнить',
-                copied:             'Скопировано!',
-                no_output:          'Нет вывода',
-                dialog_header:      'Сохранить сниппет',
-                name_label:         'Название',
-                desc_label:         'Описание',
-                folder_label:       'Папка',
-                no_folder:          '— Без папки —',
-                shared_label:       'Доступ для всех',
-                save_as_new_label:  'Сохранить как новый',
-                save_btn:           'Сохранить',
-                cancel:             'Отмена',
-                name_required:      'Укажите название сниппета',
-                access_shared:      'Общий доступ',
-                access_personal:    'Личный',
-                saved:              'Сниппет сохранён',
-                save_error:         'Ошибка при сохранении',
+                execute_label:      'Run',
+                copied:             'Copied!',
+                no_output:          'No output',
+                dialog_header:      'Save snippet',
+                name_label:         'Name',
+                desc_label:         'Description',
+                folder_label:       'Folder',
+                no_folder:          '— No folder —',
+                shared_label:       'Shared with everyone',
+                save_as_new_label:  'Save as new',
+                save_btn:           'Save',
+                cancel:             'Cancel',
+                name_required:      'Enter a snippet name',
+                access_shared:      'Shared',
+                access_personal:    'Private',
+                saved:              'Snippet saved',
+                save_error:         'Error while saving',
+                duplicated:         'Snippet duplicated',
             }, options.l10n || {});
             this.folders = options.folders || [];
         }
@@ -388,7 +389,7 @@
                     this.currentFolderId  = s.folder_id ? parseInt(s.folder_id) : null;
                     this.#updateMeta(s.name, s.description ?? "", s.is_shared);
                     this.saveToLocalStorage();
-                    if ($.wa && $.wa.notice) $.wa.notice("Сниппет продублирован");
+                    if ($.wa && $.wa.notice) $.wa.notice(this.l10n.duplicated);
                 },
             });
         }

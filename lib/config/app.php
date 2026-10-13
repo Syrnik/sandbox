@@ -1,6 +1,6 @@
 <?php
 return [
-    'name'    => 'Sandbox',
+    'name'    => /*_w*/('Sandbox'),
     'icon'    => 'img/sandbox.svg',
     'version' => '1.3.0',
     'vendor'  => '670917',

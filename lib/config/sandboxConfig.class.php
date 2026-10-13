@@ -30,10 +30,10 @@ class sandboxConfig extends waAppConfig
     public function getModel(string $name): waModel
     {
         if ($this->isCloud()) {
-            throw new waException('Sandbox is not available in Webasyst Cloud');
+            throw new waException(_w('Sandbox is not available in Webasyst Cloud'));
         }
         if(waConfig::get('is_template')) {
-            throw new waException('You can not use sandbox models in template');
+            throw new waException(_w('You can not use sandbox models in template'));
         }
         $class = 'sandbox' . $name . 'Model';
         return new $class($this->getDbType());
@@ -42,7 +42,7 @@ class sandboxConfig extends waAppConfig
     public function getDbType(): ?string
     {
         if(waConfig::get('is_template')) {
-            throw new waException('You can not use sandbox models in template');
+            throw new waException(_w('You can not use sandbox models in template'));
         }
 
         $type = $this->options['db_connection'] ?? null;

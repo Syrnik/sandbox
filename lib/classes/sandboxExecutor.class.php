@@ -17,7 +17,7 @@ class sandboxExecutor
         if (sandbox()->isCloud()) {
             return [
                 'output'         => '',
-                'error'          => _w('Приложение недоступно в Облаке Webasyst.'),
+                'error'          => _w('Sandbox is not available in Webasyst Cloud'),
                 'execution_time' => 0.0,
             ];
         }

@@ -8,13 +8,13 @@
                             <div id="snippet-name-display" class="bold nowrap"></div>
                             <p id="snippet-desc-display" class="hint custom-mt-2 nowrap"></p>
                         </div>
-                        <span id="access-icon" class="sandbox-access-icon" title="Личный"><i class="fas fa-lock text-yellow"></i></span>
+                        <span id="access-icon" class="sandbox-access-icon" title="{_w('Private')|escape}"><i class="fas fa-lock text-yellow"></i></span>
                     </div>
                 </div>
                 <div>
                     <div class="wa-select">
                         <select id="environment-select">
-                            <option value="">— {_w('Без окружения')|escape} —</option>
+                            <option value="">— {_w('No environment')|escape} —</option>
                             {foreach $environments as $env}
                             <option value="{$env.id}">{$env.name|escape}</option>
                             {/foreach}
@@ -22,8 +22,8 @@
                     </div>
                 </div>
                 <div>
-                    <a href="?module=backend&action=catalog" class="button light-gray">{_w('Каталог сниппетов')|escape}</a>
-                    <a href="?module=backend&action=environments" class="button light-gray">{_w('Окружения')|escape}</a>
+                    <a href="?module=backend&action=catalog" class="button light-gray">{_w('Snippet catalog')|escape}</a>
+                    <a href="?module=backend&action=environments" class="button light-gray">{_w('Environments')|escape}</a>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 <div>
                     <div class="wa-select">
                         <select id="recent-snippets">
-                            <option value="">— {_w('Недавние сниппеты')|escape} —</option>
+                            <option value="">— {_w('Recent snippets')|escape} —</option>
                             {foreach $recent_snippets as $s}
                             <option value="{$s.id}" class="js-load-snippet">{$s.name|escape}</option>
                             {/foreach}
@@ -74,19 +74,19 @@
                 </div>
 
                 <div class="box sandbox-editor-footer">
-                    <button type="button" id="btn-execute" class="button green"><i class="fas fa-play"></i> {_w('Выполнить')|escape}</button>
-                    <button type="button" id="btn-save" class="button blue"><i class="fas fa-save"></i> {_w('Сохранить')|escape}</button>
-                    <button type="button" id="btn-duplicate" class="button light-gray" style="display:none"><i class="fas fa-copy"></i> {_w('Дублировать')|escape}</button>
-                    <button type="button" id="btn-new" class="button light-gray">{_w('Новый')|escape}</button>
+                    <button type="button" id="btn-execute" class="button green"><i class="fas fa-play"></i> {_w('Run')|escape}</button>
+                    <button type="button" id="btn-save" class="button blue"><i class="fas fa-save"></i> {_w('Save')|escape}</button>
+                    <button type="button" id="btn-duplicate" class="button light-gray" style="display:none"><i class="fas fa-copy"></i> {_w('Duplicate')|escape}</button>
+                    <button type="button" id="btn-new" class="button light-gray">{_w('New')|escape}</button>
                 </div>
             </div>
 
             <div class="sandbox-result-column">
                 <div class="sandbox-result-box box shadowed">
                     <div class="box small flexbox middle space-8">
-                        <strong class="wide">{_w('Результат')|escape}</strong>
-                        <button type="button" id="btn-clear-result" class="button light-gray small">{_w('Очистить')|escape}</button>
-                        <button type="button" id="btn-copy-result" class="button light-gray small">{_w('Копировать')|escape}</button>
+                        <strong class="wide">{_w('Result')|escape}</strong>
+                        <button type="button" id="btn-clear-result" class="button light-gray small">{_w('Clear')|escape}</button>
+                        <button type="button" id="btn-copy-result" class="button light-gray small">{_w('Copy')|escape}</button>
                     </div>
                     <div id="result-output" class="sandbox-result-panel box small"></div>
                     <div id="result-errors" class="sandbox-error box" style="display:none"></div>
@@ -104,21 +104,24 @@ $(() => {
     const sandboxEditor = new SandboxEditor({
         folders: {$folders|json_encode},
         l10n: {
-            execute_label:     {_w('Выполнить')|json_encode:256},
-            copied:            {_w('Скопировано!')|json_encode:256},
-            no_output:         {_w('Нет вывода')|json_encode:256},
-            dialog_header:     {_w('Сохранить сниппет')|json_encode:256},
-            name_label:        {_w('Название')|json_encode:256},
-            desc_label:        {_w('Описание')|json_encode:256},
-            folder_label:      {_w('Папка')|json_encode:256},
-            no_folder:         {_w('— Без папки —')|json_encode:256},
-            shared_label:      {_w('Доступ для всех')|json_encode:256},
-            save_as_new_label: {_w('Сохранить как новый')|json_encode:256},
-            save_btn:          {_w('Сохранить')|json_encode:256},
-            cancel:            {_w('Отмена')|json_encode:256},
-            name_required:     {_w('Укажите название сниппета')|json_encode:256},
-            access_shared:     {_w('Общий доступ')|json_encode:256},
-            access_personal:   {_w('Личный')|json_encode:256},
+            execute_label:     {_w('Run')|json_encode:256},
+            copied:            {_w('Copied!')|json_encode:256},
+            no_output:         {_w('No output')|json_encode:256},
+            dialog_header:     {_w('Save snippet')|json_encode:256},
+            name_label:        {_w('Name')|json_encode:256},
+            desc_label:        {_w('Description')|json_encode:256},
+            folder_label:      {_w('Folder')|json_encode:256},
+            no_folder:         {_w('— No folder —')|json_encode:256},
+            shared_label:      {_w('Shared with everyone')|json_encode:256},
+            save_as_new_label: {_w('Save as new')|json_encode:256},
+            save_btn:          {_w('Save')|json_encode:256},
+            cancel:            {_w('Cancel')|json_encode:256},
+            name_required:     {_w('Enter a snippet name')|json_encode:256},
+            access_shared:     {_w('Shared')|json_encode:256},
+            access_personal:   {_w('Private')|json_encode:256},
+            saved:             {_w('Snippet saved')|json_encode:256},
+            save_error:        {_w('Error while saving')|json_encode:256},
+            duplicated:        {_w('Snippet duplicated')|json_encode:256},
         },
     });
     sandboxEditor.init();

@@ -5,11 +5,13 @@
         constructor(options) {
             options = options || {};
             this.l10n = Object.assign({
-                name_required:    'Укажите название окружения',
-                var_key_required: 'Укажите названия всех переменных',
-                confirm_delete:   'Удалить окружение?',
-                delete_btn:       'Удалить',
-                cancel:           'Отмена',
+                name_required:    'Enter an environment name',
+                var_key_required: 'Enter names for all variables',
+                confirm_delete:   'Delete environment?',
+                delete_btn:       'Delete',
+                cancel:           'Cancel',
+                saved:            'Environment saved',
+                imported:         'Environment imported',
             }, options.l10n || {});
         }
 
@@ -139,7 +141,7 @@
                     if (status !== "ok") return;
                     this.currentEnvId = env.id;
                     $("#env-id").val(env.id);
-                    SandboxToast.show('Окружение сохранено');
+                    SandboxToast.show(this.l10n.saved);
                     this.refreshEnvList();
                 },
             });
@@ -195,7 +197,7 @@
                 dataType: "json",
                 success: ({ status, data: env }) => {
                     if (status !== "ok") return;
-                    SandboxToast.show('Окружение импортировано');
+                    SandboxToast.show(this.l10n.imported);
                     this.refreshEnvList();
                     if (env?.id) this.loadEnvironment(env.id);
                 },

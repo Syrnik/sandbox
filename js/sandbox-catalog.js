@@ -5,33 +5,34 @@
         constructor(options) {
             options = options || {};
             this.l10n = Object.assign({
-                dialog_header:       'Создать папку',
-                edit_folder_header:  'Редактировать папку',
-                name_label:          'Название',
-                desc_label:          'Описание',
-                shared_label:        'Общий доступ',
-                parent_folder_label: 'Родительская папка',
-                no_parent:           '— Корень —',
-                create_btn:          'Создать',
-                save_btn:            'Сохранить',
-                cancel:              'Отмена',
-                name_required:       'Укажите название',
-                select_snippets:     'Выберите сниппеты',
-                confirm_delete:      'Удалить выбранные элементы?',
-                move_btn:            'Переместить',
-                move_header:         'Переместить в папку',
-                move_confirm:        'Переместить',
-                duplicate_snippet:   'Дублировать',
-                copy_to_me:          'Копировать к себе',
-                make_private:        'Сделать личным',
-                share_btn:           'Сделать общим',
-                open_snippet:        'Открыть в редакторе',
-                open_folder:         'Открыть',
-                edit_folder:         'Редактировать',
-                export_btn:          'Скачать JSON',
-                delete_btn:          'Удалить',
-                confirm_delete_folder_header: 'Удалить папку?',
-                confirm_delete_folder_text:   'Будут удалены все вложенные папки и все сниппеты внутри них. Это действие невозможно отменить.',
+                dialog_header:       'Create folder',
+                edit_folder_header:  'Edit folder',
+                name_label:          'Name',
+                desc_label:          'Description',
+                shared_label:        'Shared',
+                parent_folder_label: 'Parent folder',
+                no_parent:           '— Root —',
+                create_btn:          'Create',
+                save_btn:            'Save',
+                cancel:              'Cancel',
+                name_required:       'Enter a name',
+                select_snippets:     'Select snippets',
+                confirm_delete:      'Delete selected items?',
+                move_btn:            'Move',
+                move_header:         'Move to folder',
+                move_confirm:        'Move',
+                duplicate_snippet:   'Duplicate',
+                copy_to_me:          'Copy to my snippets',
+                make_private:        'Make private',
+                share_btn:           'Make shared',
+                open_snippet:        'Open in editor',
+                open_folder:         'Open',
+                edit_folder:         'Edit',
+                export_btn:          'Download JSON',
+                delete_btn:          'Delete',
+                confirm_delete_folder_header: 'Delete folder?',
+                confirm_delete_folder_text:   'All nested folders and all snippets inside them will be deleted. This action cannot be undone.',
+                import_done:         'Import completed',
             }, options.l10n || {});
             this.folders = options.folders || [];
         }
@@ -493,7 +494,7 @@
                 dataType: "json",
                 success: ({ status }) => {
                     if (status === "ok") {
-                        $.wa.notice("Импорт выполнен");
+                        $.wa.notice(this.l10n.import_done);
                         location.reload();
                     }
                 },

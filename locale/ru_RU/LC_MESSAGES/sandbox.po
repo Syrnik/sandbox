@@ -9,3 +9,264 @@ msgstr ""
 
 msgid "Sandbox"
 msgstr "Песочница"
+
+msgid "Private"
+msgstr "Личный"
+
+msgid "No environment"
+msgstr "Без окружения"
+
+msgid "Snippet catalog"
+msgstr "Каталог сниппетов"
+
+msgid "Environments"
+msgstr "Окружения"
+
+msgid "Recent snippets"
+msgstr "Недавние сниппеты"
+
+msgid "Run"
+msgstr "Выполнить"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Duplicate"
+msgstr "Дублировать"
+
+msgid "New"
+msgstr "Новый"
+
+msgid "Result"
+msgstr "Результат"
+
+msgid "Clear"
+msgstr "Очистить"
+
+msgid "Copy"
+msgstr "Копировать"
+
+msgid "Copied!"
+msgstr "Скопировано!"
+
+msgid "No output"
+msgstr "Нет вывода"
+
+msgid "Save snippet"
+msgstr "Сохранить сниппет"
+
+msgid "Name"
+msgstr "Название"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Folder"
+msgstr "Папка"
+
+msgid "— No folder —"
+msgstr "— Без папки —"
+
+msgid "Shared with everyone"
+msgstr "Доступ для всех"
+
+msgid "Save as new"
+msgstr "Сохранить как новый"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Enter a snippet name"
+msgstr "Укажите название сниппета"
+
+msgid "Shared"
+msgstr "Общий доступ"
+
+msgid "Snippet saved"
+msgstr "Сниппет сохранён"
+
+msgid "Error while saving"
+msgstr "Ошибка при сохранении"
+
+msgid "Snippet duplicated"
+msgstr "Сниппет продублирован"
+
+msgid "Editor"
+msgstr "Редактор"
+
+msgid "Create folder"
+msgstr "Создать папку"
+
+msgid "Create snippet"
+msgstr "Создать сниппет"
+
+msgid "Import"
+msgstr "Загрузить"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Empty. Create a folder or a snippet."
+msgstr "Пусто. Создайте папку или сниппет."
+
+msgid "Selected:"
+msgstr "Выбрано:"
+
+msgid "Make shared"
+msgstr "Сделать общим"
+
+msgid "Make private"
+msgstr "Сделать личным"
+
+msgid "Move"
+msgstr "Переместить"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Edit folder"
+msgstr "Редактировать папку"
+
+msgid "Parent folder"
+msgstr "Родительская папка"
+
+msgid "— Root —"
+msgstr "— Корень —"
+
+msgid "Create"
+msgstr "Создать"
+
+msgid "Enter a name"
+msgstr "Укажите название"
+
+msgid "Select snippets"
+msgstr "Выберите сниппеты"
+
+msgid "Delete selected items?"
+msgstr "Удалить выбранные элементы?"
+
+msgid "Move to folder"
+msgstr "Переместить в папку"
+
+msgid "Copy to my snippets"
+msgstr "Копировать к себе"
+
+msgid "Open in editor"
+msgstr "Открыть в редакторе"
+
+msgid "Open"
+msgstr "Открыть"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Download JSON"
+msgstr "Скачать JSON"
+
+msgid "Delete folder?"
+msgstr "Удалить папку?"
+
+msgid "All nested folders and all snippets inside them will be deleted. This action cannot be undone."
+msgstr "Будут удалены все вложенные папки и все сниппеты внутри них. Это действие невозможно отменить."
+
+msgid "Import completed"
+msgstr "Импорт выполнен"
+
+msgid "Sandbox is not available in Webasyst Cloud"
+msgstr "Приложение «Sandbox» недоступно в Облаке Webasyst"
+
+msgid "Sandbox executes arbitrary PHP and Smarty code, so it is disabled in the cloud. The app works only on a self-hosted server."
+msgstr "«Sandbox» выполняет произвольный PHP- и Smarty-код, поэтому в облачной среде отключён. Приложение работает только на собственном сервере."
+
+msgid "Add environment"
+msgstr "Добавить окружение"
+
+msgid "Environment name"
+msgstr "Название окружения"
+
+msgid "Variable"
+msgstr "Переменная"
+
+msgid "Value"
+msgstr "Значение"
+
+msgid "Add variable"
+msgstr "Добавить переменную"
+
+msgid "Export"
+msgstr "Экспорт"
+
+msgid "Select an environment from the list or create a new one."
+msgstr "Выберите окружение из списка или создайте новое."
+
+msgid "Enter an environment name"
+msgstr "Укажите название окружения"
+
+msgid "Enter names for all variables"
+msgstr "Укажите названия всех переменных"
+
+msgid "Delete environment?"
+msgstr "Удалить окружение?"
+
+msgid "Environment saved"
+msgstr "Окружение сохранено"
+
+msgid "Environment imported"
+msgstr "Окружение импортировано"
+
+msgid "Snippet not found"
+msgstr "Сниппет не найден"
+
+msgid "Name is required"
+msgstr "Название обязательно"
+
+msgid "(copy)"
+msgstr "(копия)"
+
+msgid "Environment not found"
+msgstr "Окружение не найдено"
+
+msgid "Invalid JSON in variables"
+msgstr "Невалидный JSON в переменных"
+
+msgid "Invalid export type"
+msgstr "Неверный тип экспорта"
+
+msgid "Invalid import format"
+msgstr "Неверный формат импорта"
+
+msgid "Invalid import type"
+msgstr "Неверный тип импорта"
+
+msgid "Not found"
+msgstr "Не найдено"
+
+msgid "Imported snippet"
+msgstr "Импортированный сниппет"
+
+msgid "Imported folder"
+msgstr "Импортированная папка"
+
+msgid "Snippet"
+msgstr "Сниппет"
+
+msgid "Imported environment"
+msgstr "Импортированное окружение"
+
+msgid "You can not use sandbox models in template"
+msgstr "Модели Sandbox нельзя использовать в шаблоне"
+
+msgid "Get a variable of the current user by name"
+msgstr "Получить переменную текущего пользователя по имени"
+
+msgid "Get a variable with a fallback value"
+msgstr "Получить переменную с fallback-значением"
+
+msgid "Get all variables of the current user (array)"
+msgstr "Получить все переменные текущего пользователя (массив)"
+
+msgid "Save a variable for the current user"
+msgstr "Сохранить переменную для текущего пользователя"
+
+msgid "Delete a variable of the current user"
+msgstr "Удалить переменную текущего пользователя"
