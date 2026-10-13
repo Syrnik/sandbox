@@ -1,6 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sandbox\n"
+"Language: en_US\n"
 "POT-Creation-Date: 2026-10-13 15:04+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: sandbox\n"
@@ -16,265 +17,265 @@ msgstr ""
 "X-Poedit-SearchPath-1: .\n"
 
 msgid "Private"
-msgstr ""
+msgstr "Private"
 
 msgid "No environment"
-msgstr ""
+msgstr "No environment"
 
 msgid "Snippet catalog"
-msgstr ""
+msgstr "Snippet catalog"
 
 msgid "Environments"
-msgstr ""
+msgstr "Environments"
 
 msgid "Recent snippets"
-msgstr ""
+msgstr "Recent snippets"
 
 msgid "Run"
-msgstr ""
+msgstr "Run"
 
 msgid "Save"
-msgstr ""
+msgstr "Save"
 
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplicate"
 
 msgid "New"
-msgstr ""
+msgstr "New"
 
 msgid "Result"
-msgstr ""
+msgstr "Result"
 
 msgid "Clear"
-msgstr ""
+msgstr "Clear"
 
 msgid "Copy"
-msgstr ""
+msgstr "Copy"
 
 msgid "Copied!"
-msgstr ""
+msgstr "Copied!"
 
 msgid "No output"
-msgstr ""
+msgstr "No output"
 
 msgid "Save snippet"
-msgstr ""
+msgstr "Save snippet"
 
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 msgid "Folder"
-msgstr ""
+msgstr "Folder"
 
 msgid "— No folder —"
-msgstr ""
+msgstr "— No folder —"
 
 msgid "Shared with everyone"
-msgstr ""
+msgstr "Shared with everyone"
 
 msgid "Save as new"
-msgstr ""
+msgstr "Save as new"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Cancel"
 
 msgid "Enter a snippet name"
-msgstr ""
+msgstr "Enter a snippet name"
 
 msgid "Shared"
-msgstr ""
+msgstr "Shared"
 
 msgid "Snippet saved"
-msgstr ""
+msgstr "Snippet saved"
 
 msgid "Error while saving"
-msgstr ""
+msgstr "Error while saving"
 
 msgid "Snippet duplicated"
-msgstr ""
+msgstr "Snippet duplicated"
 
 msgid "Editor"
-msgstr ""
+msgstr "Editor"
 
 msgid "Create folder"
-msgstr ""
+msgstr "Create folder"
 
 msgid "Create snippet"
-msgstr ""
+msgstr "Create snippet"
 
 msgid "Import"
-msgstr ""
+msgstr "Import"
 
 msgid "Actions"
-msgstr ""
+msgstr "Actions"
 
 msgid "Empty. Create a folder or a snippet."
-msgstr ""
+msgstr "Empty. Create a folder or a snippet."
 
 msgid "Selected:"
-msgstr ""
+msgstr "Selected:"
 
 msgid "Make shared"
-msgstr ""
+msgstr "Make shared"
 
 msgid "Make private"
-msgstr ""
+msgstr "Make private"
 
 msgid "Move"
-msgstr ""
+msgstr "Move"
 
 msgid "Delete"
-msgstr ""
+msgstr "Delete"
 
 msgid "Edit folder"
-msgstr ""
+msgstr "Edit folder"
 
 msgid "Parent folder"
-msgstr ""
+msgstr "Parent folder"
 
 msgid "— Root —"
-msgstr ""
+msgstr "— Root —"
 
 msgid "Create"
-msgstr ""
+msgstr "Create"
 
 msgid "Enter a name"
-msgstr ""
+msgstr "Enter a name"
 
 msgid "Select snippets"
-msgstr ""
+msgstr "Select snippets"
 
 msgid "Delete selected items?"
-msgstr ""
+msgstr "Delete selected items?"
 
 msgid "Move to folder"
-msgstr ""
+msgstr "Move to folder"
 
 msgid "Copy to my snippets"
-msgstr ""
+msgstr "Copy to my snippets"
 
 msgid "Open in editor"
-msgstr ""
+msgstr "Open in editor"
 
 msgid "Open"
-msgstr ""
+msgstr "Open"
 
 msgid "Edit"
-msgstr ""
+msgstr "Edit"
 
 msgid "Download JSON"
-msgstr ""
+msgstr "Download JSON"
 
 msgid "Delete folder?"
-msgstr ""
+msgstr "Delete folder?"
 
 msgid "All nested folders and all snippets inside them will be deleted. This action cannot be undone."
-msgstr ""
+msgstr "All nested folders and all snippets inside them will be deleted. This action cannot be undone."
 
 msgid "Import completed"
-msgstr ""
+msgstr "Import completed"
 
 msgid "Sandbox is not available in Webasyst Cloud"
-msgstr ""
+msgstr "Sandbox is not available in Webasyst Cloud"
 
 msgid "Sandbox executes arbitrary PHP and Smarty code, so it is disabled in the cloud. The app works only on a self-hosted server."
-msgstr ""
+msgstr "Sandbox executes arbitrary PHP and Smarty code, so it is disabled in the cloud. The app works only on a self-hosted server."
 
 msgid "Add environment"
-msgstr ""
+msgstr "Add environment"
 
 msgid "Environment name"
-msgstr ""
+msgstr "Environment name"
 
 msgid "Variable"
-msgstr ""
+msgstr "Variable"
 
 msgid "Value"
-msgstr ""
+msgstr "Value"
 
 msgid "Add variable"
-msgstr ""
+msgstr "Add variable"
 
 msgid "Export"
-msgstr ""
+msgstr "Export"
 
 msgid "Select an environment from the list or create a new one."
-msgstr ""
+msgstr "Select an environment from the list or create a new one."
 
 msgid "Enter an environment name"
-msgstr ""
+msgstr "Enter an environment name"
 
 msgid "Enter names for all variables"
-msgstr ""
+msgstr "Enter names for all variables"
 
 msgid "Delete environment?"
-msgstr ""
+msgstr "Delete environment?"
 
 msgid "Environment saved"
-msgstr ""
+msgstr "Environment saved"
 
 msgid "Environment imported"
-msgstr ""
+msgstr "Environment imported"
 
 msgid "Sandbox"
-msgstr ""
+msgstr "Sandbox"
 
 msgid "Snippet not found"
-msgstr ""
+msgstr "Snippet not found"
 
 msgid "Name is required"
-msgstr ""
+msgstr "Name is required"
 
 msgid "(copy)"
-msgstr ""
+msgstr "(copy)"
 
 msgid "Environment not found"
-msgstr ""
+msgstr "Environment not found"
 
 msgid "Invalid JSON in variables"
-msgstr ""
+msgstr "Invalid JSON in variables"
 
 msgid "Invalid export type"
-msgstr ""
+msgstr "Invalid export type"
 
 msgid "Invalid import format"
-msgstr ""
+msgstr "Invalid import format"
 
 msgid "Invalid import type"
-msgstr ""
+msgstr "Invalid import type"
 
 msgid "Not found"
-msgstr ""
+msgstr "Not found"
 
 msgid "Imported snippet"
-msgstr ""
+msgstr "Imported snippet"
 
 msgid "Imported folder"
-msgstr ""
+msgstr "Imported folder"
 
 msgid "Snippet"
-msgstr ""
+msgstr "Snippet"
 
 msgid "Imported environment"
-msgstr ""
+msgstr "Imported environment"
 
 msgid "You can not use sandbox models in template"
-msgstr ""
+msgstr "You can not use sandbox models in template"
 
 msgid "Get a variable of the current user by name"
-msgstr ""
+msgstr "Get a variable of the current user by name"
 
 msgid "Get a variable with a fallback value"
-msgstr ""
+msgstr "Get a variable with a fallback value"
 
 msgid "Get all variables of the current user (array)"
-msgstr ""
+msgstr "Get all variables of the current user (array)"
 
 msgid "Save a variable for the current user"
-msgstr ""
+msgstr "Save a variable for the current user"
 
 msgid "Delete a variable of the current user"
-msgstr ""
+msgstr "Delete a variable of the current user"

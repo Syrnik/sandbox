@@ -1,6 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sandbox\n"
+"Language: nl_NL\n"
 "POT-Creation-Date: 2026-10-13 15:04+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: sandbox\n"
@@ -16,265 +17,265 @@ msgstr ""
 "X-Poedit-SearchPath-1: .\n"
 
 msgid "Private"
-msgstr ""
+msgstr "Privé"
 
 msgid "No environment"
-msgstr ""
+msgstr "Geen omgeving"
 
 msgid "Snippet catalog"
-msgstr ""
+msgstr "Snippetcatalogus"
 
 msgid "Environments"
-msgstr ""
+msgstr "Omgevingen"
 
 msgid "Recent snippets"
-msgstr ""
+msgstr "Recente snippets"
 
 msgid "Run"
-msgstr ""
+msgstr "Uitvoeren"
 
 msgid "Save"
-msgstr ""
+msgstr "Opslaan"
 
 msgid "Duplicate"
-msgstr ""
+msgstr "Dupliceren"
 
 msgid "New"
-msgstr ""
+msgstr "Nieuw"
 
 msgid "Result"
-msgstr ""
+msgstr "Resultaat"
 
 msgid "Clear"
-msgstr ""
+msgstr "Wissen"
 
 msgid "Copy"
-msgstr ""
+msgstr "Kopiëren"
 
 msgid "Copied!"
-msgstr ""
+msgstr "Gekopieerd!"
 
 msgid "No output"
-msgstr ""
+msgstr "Geen uitvoer"
 
 msgid "Save snippet"
-msgstr ""
+msgstr "Snippet opslaan"
 
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 msgid "Description"
-msgstr ""
+msgstr "Beschrijving"
 
 msgid "Folder"
-msgstr ""
+msgstr "Map"
 
 msgid "— No folder —"
-msgstr ""
+msgstr "— Geen map —"
 
 msgid "Shared with everyone"
-msgstr ""
+msgstr "Gedeeld met iedereen"
 
 msgid "Save as new"
-msgstr ""
+msgstr "Opslaan als nieuw"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Annuleren"
 
 msgid "Enter a snippet name"
-msgstr ""
+msgstr "Voer een snippetnaam in"
 
 msgid "Shared"
-msgstr ""
+msgstr "Gedeeld"
 
 msgid "Snippet saved"
-msgstr ""
+msgstr "Snippet opgeslagen"
 
 msgid "Error while saving"
-msgstr ""
+msgstr "Fout bij opslaan"
 
 msgid "Snippet duplicated"
-msgstr ""
+msgstr "Snippet gedupliceerd"
 
 msgid "Editor"
-msgstr ""
+msgstr "Editor"
 
 msgid "Create folder"
-msgstr ""
+msgstr "Map aanmaken"
 
 msgid "Create snippet"
-msgstr ""
+msgstr "Snippet aanmaken"
 
 msgid "Import"
-msgstr ""
+msgstr "Importeren"
 
 msgid "Actions"
-msgstr ""
+msgstr "Acties"
 
 msgid "Empty. Create a folder or a snippet."
-msgstr ""
+msgstr "Leeg. Maak een map of een snippet aan."
 
 msgid "Selected:"
-msgstr ""
+msgstr "Geselecteerd:"
 
 msgid "Make shared"
-msgstr ""
+msgstr "Delen"
 
 msgid "Make private"
-msgstr ""
+msgstr "Privé maken"
 
 msgid "Move"
-msgstr ""
+msgstr "Verplaatsen"
 
 msgid "Delete"
-msgstr ""
+msgstr "Verwijderen"
 
 msgid "Edit folder"
-msgstr ""
+msgstr "Map bewerken"
 
 msgid "Parent folder"
-msgstr ""
+msgstr "Bovenliggende map"
 
 msgid "— Root —"
-msgstr ""
+msgstr "— Hoofdmap —"
 
 msgid "Create"
-msgstr ""
+msgstr "Aanmaken"
 
 msgid "Enter a name"
-msgstr ""
+msgstr "Voer een naam in"
 
 msgid "Select snippets"
-msgstr ""
+msgstr "Selecteer snippets"
 
 msgid "Delete selected items?"
-msgstr ""
+msgstr "Geselecteerde items verwijderen?"
 
 msgid "Move to folder"
-msgstr ""
+msgstr "Naar map verplaatsen"
 
 msgid "Copy to my snippets"
-msgstr ""
+msgstr "Naar mijn snippets kopiëren"
 
 msgid "Open in editor"
-msgstr ""
+msgstr "Openen in editor"
 
 msgid "Open"
-msgstr ""
+msgstr "Openen"
 
 msgid "Edit"
-msgstr ""
+msgstr "Bewerken"
 
 msgid "Download JSON"
-msgstr ""
+msgstr "JSON downloaden"
 
 msgid "Delete folder?"
-msgstr ""
+msgstr "Map verwijderen?"
 
 msgid "All nested folders and all snippets inside them will be deleted. This action cannot be undone."
-msgstr ""
+msgstr "Alle onderliggende mappen en alle snippets daarin worden verwijderd. Deze actie kan niet ongedaan worden gemaakt."
 
 msgid "Import completed"
-msgstr ""
+msgstr "Import voltooid"
 
 msgid "Sandbox is not available in Webasyst Cloud"
-msgstr ""
+msgstr "Sandbox is niet beschikbaar in Webasyst Cloud"
 
 msgid "Sandbox executes arbitrary PHP and Smarty code, so it is disabled in the cloud. The app works only on a self-hosted server."
-msgstr ""
+msgstr "Sandbox voert willekeurige PHP- en Smarty-code uit en is daarom uitgeschakeld in de cloud. De app werkt alleen op een eigen server."
 
 msgid "Add environment"
-msgstr ""
+msgstr "Omgeving toevoegen"
 
 msgid "Environment name"
-msgstr ""
+msgstr "Naam van de omgeving"
 
 msgid "Variable"
-msgstr ""
+msgstr "Variabele"
 
 msgid "Value"
-msgstr ""
+msgstr "Waarde"
 
 msgid "Add variable"
-msgstr ""
+msgstr "Variabele toevoegen"
 
 msgid "Export"
-msgstr ""
+msgstr "Exporteren"
 
 msgid "Select an environment from the list or create a new one."
-msgstr ""
+msgstr "Selecteer een omgeving uit de lijst of maak een nieuwe aan."
 
 msgid "Enter an environment name"
-msgstr ""
+msgstr "Voer een naam voor de omgeving in"
 
 msgid "Enter names for all variables"
-msgstr ""
+msgstr "Voer namen in voor alle variabelen"
 
 msgid "Delete environment?"
-msgstr ""
+msgstr "Omgeving verwijderen?"
 
 msgid "Environment saved"
-msgstr ""
+msgstr "Omgeving opgeslagen"
 
 msgid "Environment imported"
-msgstr ""
+msgstr "Omgeving geïmporteerd"
 
 msgid "Sandbox"
-msgstr ""
+msgstr "Sandbox"
 
 msgid "Snippet not found"
-msgstr ""
+msgstr "Snippet niet gevonden"
 
 msgid "Name is required"
-msgstr ""
+msgstr "Naam is verplicht"
 
 msgid "(copy)"
-msgstr ""
+msgstr "(kopie)"
 
 msgid "Environment not found"
-msgstr ""
+msgstr "Omgeving niet gevonden"
 
 msgid "Invalid JSON in variables"
-msgstr ""
+msgstr "Ongeldige JSON in variabelen"
 
 msgid "Invalid export type"
-msgstr ""
+msgstr "Ongeldig exporttype"
 
 msgid "Invalid import format"
-msgstr ""
+msgstr "Ongeldig importformaat"
 
 msgid "Invalid import type"
-msgstr ""
+msgstr "Ongeldig importtype"
 
 msgid "Not found"
-msgstr ""
+msgstr "Niet gevonden"
 
 msgid "Imported snippet"
-msgstr ""
+msgstr "Geïmporteerde snippet"
 
 msgid "Imported folder"
-msgstr ""
+msgstr "Geïmporteerde map"
 
 msgid "Snippet"
-msgstr ""
+msgstr "Snippet"
 
 msgid "Imported environment"
-msgstr ""
+msgstr "Geïmporteerde omgeving"
 
 msgid "You can not use sandbox models in template"
-msgstr ""
+msgstr "Sandbox-modellen kunnen niet in templates worden gebruikt"
 
 msgid "Get a variable of the current user by name"
-msgstr ""
+msgstr "Variabele van de huidige gebruiker op naam ophalen"
 
 msgid "Get a variable with a fallback value"
-msgstr ""
+msgstr "Variabele met standaardwaarde ophalen"
 
 msgid "Get all variables of the current user (array)"
-msgstr ""
+msgstr "Alle variabelen van de huidige gebruiker ophalen (array)"
 
 msgid "Save a variable for the current user"
-msgstr ""
+msgstr "Variabele opslaan voor de huidige gebruiker"
 
 msgid "Delete a variable of the current user"
-msgstr ""
+msgstr "Variabele van de huidige gebruiker verwijderen"

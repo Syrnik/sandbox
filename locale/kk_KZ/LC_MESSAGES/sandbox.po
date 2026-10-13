@@ -1,6 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sandbox\n"
+"Language: kk_KZ\n"
 "POT-Creation-Date: 2026-10-13 15:04+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: sandbox\n"
@@ -16,265 +17,265 @@ msgstr ""
 "X-Poedit-SearchPath-1: .\n"
 
 msgid "Private"
-msgstr ""
+msgstr "Жеке"
 
 msgid "No environment"
-msgstr ""
+msgstr "Ортасыз"
 
 msgid "Snippet catalog"
-msgstr ""
+msgstr "Сниппеттер каталогы"
 
 msgid "Environments"
-msgstr ""
+msgstr "Орталар"
 
 msgid "Recent snippets"
-msgstr ""
+msgstr "Соңғы сниппеттер"
 
 msgid "Run"
-msgstr ""
+msgstr "Орындау"
 
 msgid "Save"
-msgstr ""
+msgstr "Сақтау"
 
 msgid "Duplicate"
-msgstr ""
+msgstr "Көшірмесін жасау"
 
 msgid "New"
-msgstr ""
+msgstr "Жаңа"
 
 msgid "Result"
-msgstr ""
+msgstr "Нәтиже"
 
 msgid "Clear"
-msgstr ""
+msgstr "Тазалау"
 
 msgid "Copy"
-msgstr ""
+msgstr "Көшіру"
 
 msgid "Copied!"
-msgstr ""
+msgstr "Көшірілді!"
 
 msgid "No output"
-msgstr ""
+msgstr "Шығыс жоқ"
 
 msgid "Save snippet"
-msgstr ""
+msgstr "Сниппетті сақтау"
 
 msgid "Name"
-msgstr ""
+msgstr "Атауы"
 
 msgid "Description"
-msgstr ""
+msgstr "Сипаттамасы"
 
 msgid "Folder"
-msgstr ""
+msgstr "Қалта"
 
 msgid "— No folder —"
-msgstr ""
+msgstr "— Қалтасыз —"
 
 msgid "Shared with everyone"
-msgstr ""
+msgstr "Барлығына қолжетімді"
 
 msgid "Save as new"
-msgstr ""
+msgstr "Жаңа ретінде сақтау"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Бас тарту"
 
 msgid "Enter a snippet name"
-msgstr ""
+msgstr "Сниппет атауын енгізіңіз"
 
 msgid "Shared"
-msgstr ""
+msgstr "Ортақ"
 
 msgid "Snippet saved"
-msgstr ""
+msgstr "Сниппет сақталды"
 
 msgid "Error while saving"
-msgstr ""
+msgstr "Сақтау кезінде қате"
 
 msgid "Snippet duplicated"
-msgstr ""
+msgstr "Сниппеттің көшірмесі жасалды"
 
 msgid "Editor"
-msgstr ""
+msgstr "Редактор"
 
 msgid "Create folder"
-msgstr ""
+msgstr "Қалта құру"
 
 msgid "Create snippet"
-msgstr ""
+msgstr "Сниппет құру"
 
 msgid "Import"
-msgstr ""
+msgstr "Импорттау"
 
 msgid "Actions"
-msgstr ""
+msgstr "Әрекеттер"
 
 msgid "Empty. Create a folder or a snippet."
-msgstr ""
+msgstr "Бос. Қалта немесе сниппет құрыңыз."
 
 msgid "Selected:"
-msgstr ""
+msgstr "Таңдалды:"
 
 msgid "Make shared"
-msgstr ""
+msgstr "Ортақ ету"
 
 msgid "Make private"
-msgstr ""
+msgstr "Жеке ету"
 
 msgid "Move"
-msgstr ""
+msgstr "Жылжыту"
 
 msgid "Delete"
-msgstr ""
+msgstr "Жою"
 
 msgid "Edit folder"
-msgstr ""
+msgstr "Қалтаны өңдеу"
 
 msgid "Parent folder"
-msgstr ""
+msgstr "Ата-аналық қалта"
 
 msgid "— Root —"
-msgstr ""
+msgstr "— Түбір —"
 
 msgid "Create"
-msgstr ""
+msgstr "Құру"
 
 msgid "Enter a name"
-msgstr ""
+msgstr "Атауын енгізіңіз"
 
 msgid "Select snippets"
-msgstr ""
+msgstr "Сниппеттерді таңдаңыз"
 
 msgid "Delete selected items?"
-msgstr ""
+msgstr "Таңдалған элементтерді жою керек пе?"
 
 msgid "Move to folder"
-msgstr ""
+msgstr "Қалтаға жылжыту"
 
 msgid "Copy to my snippets"
-msgstr ""
+msgstr "Менің сниппеттеріме көшіру"
 
 msgid "Open in editor"
-msgstr ""
+msgstr "Редакторда ашу"
 
 msgid "Open"
-msgstr ""
+msgstr "Ашу"
 
 msgid "Edit"
-msgstr ""
+msgstr "Өңдеу"
 
 msgid "Download JSON"
-msgstr ""
+msgstr "JSON жүктеп алу"
 
 msgid "Delete folder?"
-msgstr ""
+msgstr "Қалтаны жою керек пе?"
 
 msgid "All nested folders and all snippets inside them will be deleted. This action cannot be undone."
-msgstr ""
+msgstr "Барлық ішкі қалталар және олардағы барлық сниппеттер жойылады. Бұл әрекетті болдырмау мүмкін емес."
 
 msgid "Import completed"
-msgstr ""
+msgstr "Импорт аяқталды"
 
 msgid "Sandbox is not available in Webasyst Cloud"
-msgstr ""
+msgstr "Sandbox қосымшасы Webasyst Cloud-та қолжетімсіз"
 
 msgid "Sandbox executes arbitrary PHP and Smarty code, so it is disabled in the cloud. The app works only on a self-hosted server."
-msgstr ""
+msgstr "Sandbox кез келген PHP және Smarty кодын орындайды, сондықтан бұлтта өшірілген. Қосымша тек жеке серверде жұмыс істейді."
 
 msgid "Add environment"
-msgstr ""
+msgstr "Орта қосу"
 
 msgid "Environment name"
-msgstr ""
+msgstr "Орта атауы"
 
 msgid "Variable"
-msgstr ""
+msgstr "Айнымалы"
 
 msgid "Value"
-msgstr ""
+msgstr "Мәні"
 
 msgid "Add variable"
-msgstr ""
+msgstr "Айнымалы қосу"
 
 msgid "Export"
-msgstr ""
+msgstr "Экспорттау"
 
 msgid "Select an environment from the list or create a new one."
-msgstr ""
+msgstr "Тізімнен ортаны таңдаңыз немесе жаңасын құрыңыз."
 
 msgid "Enter an environment name"
-msgstr ""
+msgstr "Орта атауын енгізіңіз"
 
 msgid "Enter names for all variables"
-msgstr ""
+msgstr "Барлық айнымалылардың атауларын енгізіңіз"
 
 msgid "Delete environment?"
-msgstr ""
+msgstr "Ортаны жою керек пе?"
 
 msgid "Environment saved"
-msgstr ""
+msgstr "Орта сақталды"
 
 msgid "Environment imported"
-msgstr ""
+msgstr "Орта импортталды"
 
 msgid "Sandbox"
-msgstr ""
+msgstr "Құмсалғыш"
 
 msgid "Snippet not found"
-msgstr ""
+msgstr "Сниппет табылмады"
 
 msgid "Name is required"
-msgstr ""
+msgstr "Атауы міндетті"
 
 msgid "(copy)"
-msgstr ""
+msgstr "(көшірме)"
 
 msgid "Environment not found"
-msgstr ""
+msgstr "Орта табылмады"
 
 msgid "Invalid JSON in variables"
-msgstr ""
+msgstr "Айнымалыларда жарамсыз JSON"
 
 msgid "Invalid export type"
-msgstr ""
+msgstr "Экспорт түрі жарамсыз"
 
 msgid "Invalid import format"
-msgstr ""
+msgstr "Импорт пішімі жарамсыз"
 
 msgid "Invalid import type"
-msgstr ""
+msgstr "Импорт түрі жарамсыз"
 
 msgid "Not found"
-msgstr ""
+msgstr "Табылмады"
 
 msgid "Imported snippet"
-msgstr ""
+msgstr "Импортталған сниппет"
 
 msgid "Imported folder"
-msgstr ""
+msgstr "Импортталған қалта"
 
 msgid "Snippet"
-msgstr ""
+msgstr "Сниппет"
 
 msgid "Imported environment"
-msgstr ""
+msgstr "Импортталған орта"
 
 msgid "You can not use sandbox models in template"
-msgstr ""
+msgstr "Sandbox модельдерін шаблонда пайдалануға болмайды"
 
 msgid "Get a variable of the current user by name"
-msgstr ""
+msgstr "Ағымдағы пайдаланушының айнымалысын атауы бойынша алу"
 
 msgid "Get a variable with a fallback value"
-msgstr ""
+msgstr "Айнымалыны әдепкі мәнімен алу"
 
 msgid "Get all variables of the current user (array)"
-msgstr ""
+msgstr "Ағымдағы пайдаланушының барлық айнымалыларын алу (массив)"
 
 msgid "Save a variable for the current user"
-msgstr ""
+msgstr "Ағымдағы пайдаланушы үшін айнымалыны сақтау"
 
 msgid "Delete a variable of the current user"
-msgstr ""
+msgstr "Ағымдағы пайдаланушының айнымалысын жою"
